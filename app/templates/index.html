@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Université — Gestion de présence</title>
+  <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet"> -->
+   <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md py-4 px-8 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">🎓 Université</h1>
+    <div class="space-x-4">
+      <a href="{{ url_for('auth.login') }}" class="text-gray-700 hover:text-blue-600 font-medium">Connexion</a>
+      <a href="{{ url_for('auth.register') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium">Inscription</a>
+    </div>
+  </nav>
+
+  <!-- Section principale -->
+  <main class="flex-grow flex flex-col justify-center items-center text-center p-8">
+    <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Plateforme de Gestion de Présence</h2>
+    <p class="text-gray-600 text-lg max-w-2xl mb-8">
+      Simplifiez la gestion des présences à l’université grâce à un système intelligent et automatisé.  
+      Gagnez du temps, réduisez les erreurs et suivez les absences en temps réel.
+    </p>
+
+    <div class="space-x-4">
+      <a href="{{ url_for('auth.login') }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">Se connecter</a>
+      <a href="{{ url_for('auth.register') }}" class="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-50">Créer un compte</a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white py-4 shadow-inner text-center text-gray-500 text-sm">
+    © {{ current_year or 2025 }} Université | Tous droits réservés
+  </footer>
+
+</body>
+</html>

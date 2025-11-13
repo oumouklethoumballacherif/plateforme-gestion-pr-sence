@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mx-auto mt-8">
+  <h2 class="text-2xl font-bold mb-6">📋 Liste des présences</h2>
+
+  <form method="POST" class="mb-6 flex flex-wrap gap-4">
+    <select name="filiere_id" class="border p-2 rounded">
+      <option value="all">Toutes les filières</option>
+      {% for filiere in filieres %}
+      <option value="{{ filiere.id }}" {% if filiere.id|string == selected_filiere %}selected{% endif %}>
+        {{ filiere.nom }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <select name="matiere_id" class="border p-2 rounded">
+      <option value="all">Toutes les matières</option>
+      {% for matiere in matieres %}
+      <option value="{{ matiere.id }}" {% if matiere.id|string == selected_matiere %}selected{% endif %}>
+        {{ matiere.titre }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <input type="date" name="date_filtre" value="{{ selected_date }}" class="border p-2 rounded" />
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Filtrer
+    </button>
+  </form>
+
+  {% if seances %}
+  <table class="w-full border-collapse border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="border p-2">Date</th>
+        <th class="border p-2">Filière</th>
+        <th class="border p-2">Matière</th>
+        <th class="border p-2">Type</th>
+        <th class="border p-2">Présents</th>
+        <th class="border p-2">Absents</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for seance in seances %}
+      <tr>
+        <td class="border p-2">{{ seance.date_prevue.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td class="border p-2">{{ seance.filiere.nom }}</td>
+        <td class="border p-2">{{ seance.matiere.titre }}</td>
+        <td class="border p-2">{{ seance.type_seance.value }}</td>
+        <td class="border p-2">{{ seance.presences|length if seance.presences else 0 }}</td>
+        <td class="border p-2">
+          {{ seance.matiere.filiere.etudiants|length - (seance.presences|length if seance.presences else 0) }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-gray-600 mt-4">Aucune séance trouvée pour ces filtres.</p>
+  {% endif %}
+</div>
+{% endblock %}

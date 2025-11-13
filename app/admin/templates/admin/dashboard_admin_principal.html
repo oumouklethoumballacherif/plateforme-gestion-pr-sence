@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard Admin Principal{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+
+    <h1 class="text-3xl font-bold text-gray-800">Admin Principal - Tableau de bord</h1>
+
+    <!-- Actions principales -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <a href="{{ url_for('admin.manage_departments') }}" class="block bg-blue-500 text-white p-6 rounded-lg shadow hover:bg-blue-600 text-center transition">
+            <h2 class="text-xl font-bold mb-2">Gérer Départements</h2>
+            <p>Créer, modifier ou supprimer des départements</p>
+        </a>
+        <a href="{{ url_for('admin.manage_teachers') }}" class="block bg-yellow-500 text-white p-6 rounded-lg shadow hover:bg-yellow-600 text-center transition">
+            <h2 class="text-xl font-bold mb-2">Ajouter Enseignants</h2>
+            <p>Importation Excel ou ajout manuel par département</p>
+        </a>
+        <a href="{{ url_for('admin.assign_heads') }}" class="block bg-green-500 text-white p-6 rounded-lg shadow hover:bg-green-600 text-center transition">
+            <h2 class="text-xl font-bold mb-2">Affecter Chefs de Département</h2>
+            <p>Nommer un chef de département parmi les enseignants</p>
+        </a>
+
+    </div>
+
+</div>
+{% endblock %}

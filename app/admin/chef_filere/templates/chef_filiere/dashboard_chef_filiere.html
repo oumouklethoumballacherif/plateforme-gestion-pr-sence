@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard Chef de Filière{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Dashboard - {{ current_user.nom_complet }}</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Gestion années et matières -->
+    <div class="bg-white shadow-md p-6 rounded">
+        <h2 class="text-xl font-semibold mb-4">Années & Matières</h2>
+        <a href="{{ url_for('admin.manage_annees_matieres') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Gérer années et matières</a>
+    </div>
+
+    <!-- Gestion étudiants -->
+    <div class="bg-white shadow-md p-6 rounded">
+        <h2 class="text-xl font-semibold mb-4">Étudiants</h2>
+        <a href="{{ url_for('admin.manage_etudiants') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Gérer les étudiants</a>
+    </div>
+
+    <!-- Gestion cours -->
+    <div class="bg-white shadow-md p-6 rounded">
+        <h2 class="text-xl font-semibold mb-4">Cours</h2>
+        <a href="{{ url_for('enseignant.manage_cours') }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Voir mes cours</a>
+    </div>
+</div>
+
+<!-- Statistiques -->
+<div class="mt-8 bg-white shadow-md p-6 rounded">
+    <h2 class="text-xl font-semibold mb-4">Statistiques globales</h2>
+    <a href="{{ url_for('enseignant.view_statistics') }}" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Voir statistiques</a>
+</div>
+{% endblock %}

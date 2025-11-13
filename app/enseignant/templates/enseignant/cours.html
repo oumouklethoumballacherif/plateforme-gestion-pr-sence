@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% block title %}Gestion des cours{% endblock %}
+
+{% block content %}
+<div class="p-6">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">📚 Gestion des cours</h1>
+
+  <!-- Formulaire création cours -->
+  <form method="POST" class="bg-white shadow-md rounded-lg p-6 mb-8">
+    <h2 class="text-lg font-semibold mb-4 text-gray-700">Créer un nouveau cours</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label for="matiere_id" class="block text-gray-600 mb-1">Matière :</label>
+        <select name="matiere_id" id="matiere_id" required
+                class="w-full border border-gray-300 rounded-lg p-2">
+          <option value="">-- Sélectionner une matière --</option>
+          {% for matiere in matieres %}
+            <option value="{{ matiere.id }}">{{ matiere.titre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label for="type_seance" class="block text-gray-600 mb-1">Type de séance :</label>
+        <select name="type_seance" id="type_seance" required
+                class="w-full border border-gray-300 rounded-lg p-2">
+          <option value="">-- Sélectionner --</option>
+          <option value="CM">Cours Magistral (CM)</option>
+          <option value="TD">Travaux Dirigés (TD)</option>
+          <option value="TP">Travaux Pratiques (TP)</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="date_prevue" class="block text-gray-600 mb-1">Date et heure :</label>
+        <input type="datetime-local" name="date_prevue" id="date_prevue"
+               class="w-full border border-gray-300 rounded-lg p-2" required>
+      </div>
+
+      <div>
+        <label for="duree_minutes" class="block text-gray-600 mb-1">Durée (minutes) :</label>
+        <input type="number" name="duree_minutes" id="duree_minutes"
+               class="w-full border border-gray-300 rounded-lg p-2" required>
+      </div>
+    </div>
+
+    <div class="mt-6 text-right">
+      <button type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+        💾 Enregistrer
+      </button>
+    </div>
+  </form>
+
+  <!-- Liste des cours -->
+  <div class="bg-white shadow rounded-lg overflow-x-auto">
+    <h2 class="text-lg font-semibold text-gray-700 px-6 py-4 border-b">Liste des cours</h2>
+
+    {% if matieres %}
+    <table class="min-w-full border border-gray-200">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Matière</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Filière</th>
+          <th class="px-6 py-3 text-center text-sm font-semibold text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for matiere in matieres %}
+        <tr class="border-t hover:bg-gray-50">
+          <td class="px-6 py-3 text-gray-800">{{ matiere.titre }}</td>
+          <td class="px-6 py-3 text-gray-600">
+            {{ matiere.annee_formation.filiere.nom 
+               if matiere.annee_formation and matiere.annee_formation.filiere else "N/A" }}
+          </td>
+          <td class="px-6 py-3 text-center space-x-2">
+            <a href="{{ url_for('chef.start_cours', matiere_id=matiere.id) }}"
+               class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">▶️ Démarrer</a>
+            <a href="{{ url_for('chef.edit_cours', matiere_id=matiere.id) }}"
+               class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">✏️ Modifier</a>
+            <a href="{{ url_for('chef.delete_cours', matiere_id=matiere.id) }}"
+               class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+               onclick="return confirm('Supprimer ce cours ?')">🗑️ Supprimer</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="p-6 text-gray-600">Aucune matière enregistrée pour le moment.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

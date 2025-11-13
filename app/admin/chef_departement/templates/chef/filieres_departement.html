@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">📘 Filières de mon département</h1>
+
+<table class="w-full border border-gray-300">
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="border px-4 py-2">Nom</th>
+      <th class="border px-4 py-2">Code</th>
+      <th class="border px-4 py-2">Chef de filière</th>
+      <th class="border px-4 py-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for filiere in filieres %}
+    <tr>
+      <td class="border px-4 py-2">{{ filiere.nom }}</td>
+      <td class="border px-4 py-2">{{ filiere.code }}</td>
+      <td class="border px-4 py-2">
+        {% set chef = filiere.enseignants | selectattr('est_chef_filiere', 'equalto', True) | first %}
+        {% if chef %}
+          {{ chef.utilisateur.nom_complet }}
+        {% else %}
+          <span class="italic text-gray-500">Aucun chef nommé</span>
+        {% endif %}
+      </td>
+      <td class="border px-4 py-2">
+        <a href="{{ url_for('chef.nommer_chef_filiere', filiere_id=filiere.id) }}"
+           class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+          Nommer / Modifier Chef
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

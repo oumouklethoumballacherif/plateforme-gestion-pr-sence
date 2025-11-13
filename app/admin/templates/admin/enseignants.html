@@ -1,0 +1,100 @@
+{% extends 'layout.html' %}
+
+{% block title %}Gérer les Enseignants{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-gray-800">Gérer les Enseignants</h1>
+
+    <!-- ✅ Importation depuis Excel -->
+    <div class="bg-white p-6 rounded-2xl shadow mb-8 border border-gray-200">
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">Importer des enseignants depuis Excel</h2>
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="file" name="excel_file" accept=".xlsx,.xls"
+                class="border border-gray-300 p-2 rounded w-full focus:ring-2 focus:ring-blue-400" required>
+            <button type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow transition-all">
+                📂 Importer le fichier Excel
+            </button>
+        </form>
+        <p class="text-sm text-gray-500 mt-2">
+            ⚠️ Le fichier Excel doit contenir les colonnes :
+            <code>email</code>, <code>nom_complet</code>, <code>departement_id</code>.<br>
+            Chaque enseignant recevra un lien par e-mail pour définir son mot de passe.
+        </p>
+    </div>
+
+    <!-- ✅ Ajout manuel -->
+    <div class="bg-white p-6 rounded-2xl shadow mb-8 border border-gray-200">
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">Ajouter un enseignant manuellement</h2>
+        <form method="POST" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" name="nom_complet" placeholder="Nom complet" required
+                    class="border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-400">
+
+                <input type="email" name="email" placeholder="Email institutionnel" required
+                    class="border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-400">
+
+                <select name="departement_id" required
+                    class="border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-400">
+                    <option value="">Sélectionner un département</option>
+                    {% for dep in departements %}
+                    <option value="{{ dep.id }}">{{ dep.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="pt-4">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow transition-all">
+                    ➕ Ajouter et envoyer une invitation
+                </button>
+            </div>
+        </form>
+        <p class="text-sm text-gray-500 mt-2">
+            ✉️ Un e-mail d’activation sera envoyé automatiquement à l’enseignant pour créer son mot de passe.
+        </p>
+    </div>
+
+    <!-- ✅ Liste des enseignants -->
+    <div class="bg-white p-6 rounded-2xl shadow border border-gray-200">
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">Liste des enseignants</h2>
+
+        <div class="overflow-x-auto">
+            <table class="w-full border border-gray-300 rounded-lg overflow-hidden text-sm">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="border px-4 py-2 text-left">#</th>
+                        <th class="border px-4 py-2 text-left">Nom complet</th>
+                        <th class="border px-4 py-2 text-left">Email</th>
+                        <th class="border px-4 py-2 text-left">Département</th>
+                        <th class="border px-4 py-2 text-left">Email confirmé</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ens in enseignants %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="border px-4 py-2">{{ ens.id }}</td>
+                        <td class="border px-4 py-2">{{ ens.utilisateur.nom_complet }}</td>
+                        <td class="border px-4 py-2">{{ ens.utilisateur.email }}</td>
+                        <td class="border px-4 py-2">{{ ens.departement.nom }}</td>
+                        <td class="border px-4 py-2">
+                            {% if ens.utilisateur.email_confirme %}
+                            <span class="text-green-600 font-semibold">✅ Oui</span>
+                            {% else %}
+                            <span class="text-red-600 font-semibold">❌ Non</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-gray-500 border px-4 py-4">
+                            Aucun enseignant trouvé.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

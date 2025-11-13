@@ -1,0 +1,59 @@
+<!-- {% extends 'layout.html' %}
+{% block title %}Liste des Chefs de Département{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6 text-gray-800">Nommer Chef de Département ou changer le chef de département</h1>
+
+<div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <table class="w-full border-collapse">
+        <thead>
+            <tr class="bg-gray-100 text-left">
+                <th class="px-4 py-2 border">#</th>
+                <th class="px-4 py-2 border">Nom du Département</th>
+                <th class="px-4 py-2 border">Chef Actuel</th>
+                <th class="px-4 py-2 border">Changer de Chef</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dep in departements %}
+            <tr class="border-t hover:bg-gray-50">
+                <td class="px-4 py-2 border">{{ dep.id }}</td>
+                <td class="px-4 py-2 border font-semibold">{{ dep.nom }}</td>
+
+                <td class="px-4 py-2 border">
+                    {% set chef = enseignants | selectattr('departement_id', 'equalto', dep.id) | selectattr('est_chef_departement', 'equalto', True) | first %}
+
+                    {% if chef %}
+                        {{ chef.utilisateur.nom_complet }}
+                    {% else %}
+                        <span class="text-gray-500 italic">Aucun chef nommé</span>
+                    {% endif %}
+                </td>
+
+                <td class="px-4 py-2 border">
+                    <form method="POST" class="flex items-center space-x-2">
+                        <input type="hidden" name="departement_id" value="{{ dep.id }}">
+                        <select name="enseignant_id" required class="border p-2 rounded">
+                            <option value="">Sélectionner un enseignant</option>
+                            {% for ens in enseignants %}
+                            <option value="{{ ens.id }}">{{ ens.utilisateur.nom_complet }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit"
+                                class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                            Nommer
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="px-4 py-2 border text-center text-gray-500">
+                    Aucun département trouvé.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} -->

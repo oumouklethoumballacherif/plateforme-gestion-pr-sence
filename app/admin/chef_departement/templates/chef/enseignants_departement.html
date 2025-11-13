@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">👨‍🏫 Enseignants de mon département</h1>
+
+<table class="w-full border border-gray-300">
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="border px-4 py-2">Nom complet</th>
+      <th class="border px-4 py-2">Email</th>
+      <th class="border px-4 py-2">Filière</th>
+      <th class="border px-4 py-2">Rôle</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ens in enseignants %}
+    <tr>
+      <td class="border px-4 py-2">{{ ens.utilisateur.nom_complet }}</td>
+      <td class="border px-4 py-2">{{ ens.utilisateur.email }}</td>
+      <td class="border px-4 py-2">{{ ens.filiere.nom if ens.filiere else "-" }}</td>
+      <td class="border px-4 py-2">
+        {% if ens.est_chef_filiere %}
+          👑 Chef de Filière
+        {% elif ens.est_chef_departement %}
+          🏛 Chef de Département
+        {% else %}
+          Enseignant
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

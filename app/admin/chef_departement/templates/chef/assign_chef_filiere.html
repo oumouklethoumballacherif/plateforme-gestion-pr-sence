@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Nommer Chef de Filière{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Nommer un Chef de Filière</h1>
+
+<form method="POST" class="bg-white p-4 shadow rounded">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <select name="filiere_id" class="border p-2 rounded" required>
+            <option value="">Sélectionner une filière</option>
+            {% for f in filieres %}
+            <option value="{{ f.id }}">{{ f.nom }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="enseignant_id" class="border p-2 rounded" required>
+            <option value="">Sélectionner un enseignant</option>
+            {% for e in enseignants %}
+            <option value="{{ e.id }}">{{ e.utilisateur.nom_complet }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">✅ Nommer</button>
+</form>
+
+<hr class="my-6">
+
+<h2 class="text-xl font-semibold mb-4">Chefs de Filière Actuels</h2>
+<table class="w-full border border-gray-300 bg-white shadow rounded-lg">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="px-4 py-2 border">Filière</th>
+            <th class="px-4 py-2 border">Chef</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for f in filieres %}
+        <tr>
+            <td class="border px-4 py-2">{{ f.nom }}</td>
+            <td class="border px-4 py-2">
+                {% set chef = f.enseignants | selectattr('est_chef_filiere', 'equalto', True) | first %}
+                {% if chef %}
+                    {{ chef.utilisateur.nom_complet }}
+                {% else %}
+                    <span class="text-gray-500 italic">Aucun chef nommé</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

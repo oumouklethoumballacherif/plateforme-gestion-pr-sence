@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Démarrer le cours{% endblock %}
+
+{% block content %}
+<div class="p-6">
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">📚 Démarrer le cours</h1>
+
+  <!-- Informations sur le cours -->
+  <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+    <h2 class="text-xl font-semibold mb-4 text-gray-700">{{ seance.matiere.titre }}</h2>
+    <p><strong>Filière :</strong> {{ seance.matiere.annee_formation.filiere.nom }}</p>
+    <p><strong>Type de séance :</strong> {{ seance.type_seance.value }}</p>
+    <p><strong>Date et heure :</strong> {{ seance.date_prevue.strftime("%d/%m/%Y %H:%M") }}</p>
+    <p><strong>Durée :</strong> {{ seance.duree_minutes }} minutes</p>
+  </div>
+
+  <!-- QR Code pour l'appel -->
+  <div class="bg-white shadow-md rounded-lg p-6 text-center">
+    <h3 class="text-lg font-semibold mb-4 text-gray-700">QR Code pour l’appel</h3>
+    {% if seance.qr_token %}
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ seance.qr_token }}" alt="QR Code">
+      <p class="mt-2 text-gray-600">Montrez ce QR Code aux étudiants pour qu’ils enregistrent leur présence.</p>
+    {% else %}
+      <p class="text-red-600">QR Code non généré.</p>
+    {% endif %}
+  </div>
+
+  <div class="mt-6 text-right">
+    <a href="{{ url_for('chef.manage_cours') }}"
+       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+      🔙 Retour à la gestion des cours
+    </a>
+  </div>
+</div>
+{% endblock %}

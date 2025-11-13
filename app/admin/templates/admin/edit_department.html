@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block title %}Modifier Département{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Modifier le département</h1>
+
+<form method="POST">
+    <div class="bg-white shadow-md p-6 rounded">
+        <div class="mb-4">
+            <label class="block mb-2 font-semibold">Nom</label>
+            <input type="text" name="nom" value="{{ departement.nom }}" required class="border p-2 rounded w-full">
+        </div>
+
+        <div class="mb-4">
+            <label class="block mb-2 font-semibold">Code</label>
+            <input type="text" name="code" value="{{ departement.code }}" class="border p-2 rounded w-full">
+        </div>
+
+        <div class="flex space-x-2">
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                Enregistrer
+            </button>
+            <a href="{{ url_for('admin.manage_departments') }}" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">
+                Annuler
+            </a>
+        </div>
+    </div>
+</form>
+{% endblock %}

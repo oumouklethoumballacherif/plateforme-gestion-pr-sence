@@ -1,0 +1,47 @@
+
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard Chef de Département{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">Dashboard - Chef de Département</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Gestion des filières -->
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Filières</h2>
+        <p class="mb-4">Créer et gérer les filières de votre département.</p>
+        <a href="{{ url_for('chef.manage_filieres') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Gérer</a>
+    </div>
+
+    <!-- Nommer Chef de Filière -->
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Chef de Filière</h2>
+        <p class="mb-4">Nommer ou changer le chef d'une filière.</p>
+        <a href="{{ url_for('chef.assign_chef_filiere') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Nommer</a>
+    </div>
+
+    <!-- Affecter Enseignants aux Filières -->
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Affecter Enseignants</h2>
+        <p class="mb-4">Assigner des enseignants aux filières.</p>
+        <a href="{{ url_for('chef.assign_teacher_filiere') }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Affecter</a>
+    </div>
+
+    <!-- Gestion des cours -->
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Cours</h2>
+        <p class="mb-4">Créer, modifier ou démarrer les cours avec QR Code.</p>
+        <a href="{{ url_for('chef.manage_cours') }}" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Gérer</a>
+    </div>
+
+    <!-- Liste des présences -->
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Présences</h2>
+        <p class="mb-4">Consulter la présence des étudiants et les statistiques.</p>
+        <a href="{{ url_for('chef.view_presences') }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Consulter</a>
+    </div>
+
+</div>
+{% endblock %}
+

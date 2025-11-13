@@ -82,49 +82,6 @@ def delete_filiere(filiere_id):
     flash("Filière supprimée avec succès 🗑️", "success")
     return redirect(url_for("chef.manage_filieres"))
 
-
-# -----------------------------
-# Nommer Chef de filière
-# -----------------------------
-@chef_bp.route("/filieres/<int:filiere_id>/nommer_chef", methods=["GET", "POST"])
-@login_required
-def nommer_chef_filiere(filiere_id):
-    filiere = Filiere.query.get_or_404(filiere_id)
-    chef = current_user.enseignant_profil
-
-    if not chef or not chef.est_chef_departement:
-        flash("Accès non autorisé.", "danger")
-        return redirect(url_for("auth.login"))
-
-    enseignants = Enseignant.query.filter_by(departement_id=chef.departement_id).all()
-
-    if request.method == "POST":
-        enseignant_id = request.form.get("enseignant_id")
-        enseignant = Enseignant.query.get(enseignant_id)
-        if enseignant:
-            # Retirer l’ancien chef de filière (s’il existe)
-            ancien_chef = Enseignant.query.filter_by(
-                filiere_id=filiere.id, est_chef_filiere=True
-            ).first()
-            if ancien_chef:
-                ancien_chef.est_chef_filiere = False
-                if ancien_chef.utilisateur:
-                    ancien_chef.utilisateur.role = "ENSEIGNANT"
-
-            # Nommer le nouveau chef
-            enseignant.est_chef_filiere = True
-            enseignant.filiere_id = filiere.id
-            if enseignant.utilisateur:
-                enseignant.utilisateur.role = "CHEF_FILIERE"
-
-            db.session.commit()
-            flash(f"{enseignant.utilisateur.nom_complet} est maintenant chef de la filière {filiere.nom}.", "success")
-            return redirect(url_for("chef.voir_filieres"))
-
-    return render_template("nommer_chef_filiere.html", filiere=filiere, enseignants=enseignants)
-
-
-
 # -----------------------------
 # Affecter Enseignants aux filières
 # -----------------------------
@@ -378,33 +335,66 @@ def assign_chef_filiere():
             return redirect(url_for("chef.assign_chef_filiere"))
 
         filiere = Filiere.query.get_or_404(filiere_id)
-        enseignant = Enseignant.query.get_or_404(enseignant_id)
+        nouvel_ens = Enseignant.query.get_or_404(enseignant_id)
 
-        # Vérifier appartenance au même département
-        if enseignant.departement_id != departement_id or filiere.departement_id != departement_id:
-            flash("L’enseignant ou la filière ne correspond pas à votre département.", "danger")
+        # Vérification d’appartenance
+        if nouvel_ens.departement_id != departement_id or filiere.departement_id != departement_id:
+            flash("Enseignant ou filière non valide.", "danger")
             return redirect(url_for("chef.assign_chef_filiere"))
 
-        # 🔹 Retirer ancien chef de filière (si existe)
-        ancien_chef = EnseignantFiliere.query.filter_by(filiere_id=filiere.id, est_chef_filiere=True).first()
-        if ancien_chef and ancien_chef.id != enseignant.id:
-            ancien_chef.est_chef_filiere = False
-            if ancien_chef.utilisateur:
-                ancien_chef.utilisateur.role = "ENSEIGNANT"
-            db.session.add(ancien_chef)
-            flash(f"{ancien_chef.utilisateur.nom_complet} redevient enseignant titulaire.", "info")
+        # 🎯 --- 1) Récupérer TOUS les liens enseignants-filières ---
+        liens = EnseignantFiliere.query.filter_by(filiere_id=filiere.id).all()
 
-        # 🔹 Nommer le nouveau chef
-        enseignant.est_chef_filiere = True
-        if enseignant.utilisateur:
-            enseignant.utilisateur.role = "CHEF_FILIERE"
-        db.session.add(enseignant)
+        # 🎯 --- 2) Rétrograder tout ancien chef ---
+        for lien in liens:
+            if lien.est_chef_filiere:
+                lien.est_chef_filiere = False
+                if lien.enseignant.utilisateur:
+                    lien.enseignant.utilisateur.role = "ENSEIGNANT"
+                db.session.add(lien)
+        
+        
+        # 🎯 --- 3) Trouver ou créer le lien du nouvel enseignant ---
+        nouveau_lien = EnseignantFiliere.query.filter_by(
+            filiere_id=filiere.id,
+            enseignant_id=nouvel_ens.id
+        ).first()
+
+        if not nouveau_lien:
+            nouveau_lien = EnseignantFiliere(
+                filiere_id=filiere.id,
+                enseignant_id=nouvel_ens.id,
+                est_chef_filiere=True
+            )
+            db.session.add(nouveau_lien)
+        else:
+            nouveau_lien.est_chef_filiere = True
+
+        # 🎯 --- 4) Mettre rôle utilisateur ---
+        if nouvel_ens.utilisateur:
+            nouvel_ens.utilisateur.role = "CHEF_FILIERE"
+
+        # 🎯 --- 5) Commit final ---
+        db.session.flush()
         db.session.commit()
 
-        flash(f"{enseignant.utilisateur.nom_complet} est maintenant Chef de la filière {filiere.nom}.", "success")
+        flash(
+            f"{nouvel_ens.utilisateur.nom_complet} est maintenant Chef de la filière {filiere.nom}.",
+            "success"
+        )
         return redirect(url_for("chef.assign_chef_filiere"))
+    # Avant return render_template(...)
+        # Créer le mapping filiere_id → chef actuel
+    filiere_chef_map = {}
+    for filiere in filieres:
+        lien_chef = EnseignantFiliere.query.filter_by(
+            filiere_id=filiere.id,
+            est_chef_filiere=True
+        ).first()
+        filiere_chef_map[filiere.id] = lien_chef.enseignant if lien_chef else None
 
-    return render_template("assign_chef_filiere.html", filieres=filieres, enseignants=enseignants)
+
+    return render_template("assign_chef_filiere.html", filieres=filieres, enseignants=enseignants, filiere_chef_map=filiere_chef_map)
 
 
 @chef_bp.route("/liste_chefs_filieres")

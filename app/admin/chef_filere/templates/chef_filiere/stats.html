@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}Statistiques - {{ filiere.nom }}{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-4">Statistiques - {{ filiere.nom }}</h1>
+
+  <div class="bg-white rounded shadow p-4">
+    <table class="min-w-full">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2">Matière</th>
+          <th class="px-4 py-2">Présences totales</th>
+          <th class="px-4 py-2">Absences</th>
+          <th class="px-4 py-2">En rattrapage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in matieres %}
+        <tr class="border-b">
+          <td class="px-4 py-2">{{ m.titre }}</td>
+          <td class="px-4 py-2">{{ m.total_present }}</td>
+          <td class="px-4 py-2">{{ m.total_absent }}</td>
+          <td class="px-4 py-2">{{ m.rattrapage_count }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="px-4 py-4 text-gray-500">Aucune donnée</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

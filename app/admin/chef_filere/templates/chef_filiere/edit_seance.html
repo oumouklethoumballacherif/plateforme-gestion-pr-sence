@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Modifier séance{% endblock %}
+
+{% block content %}
+<div class="p-6">
+
+  <h1 class="text-2xl font-bold text-gray-800 mb-6">✏️ Modifier la séance</h1>
+
+  <form method="POST" class="bg-white shadow-md rounded-lg p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div>
+        <label class="text-gray-600">Type :</label>
+        <select name="type_seance" class="w-full border rounded-lg p-2" required>
+          <option value="CM" {% if seance.type_seance=="CM" %}selected{% endif %}>CM</option>
+          <option value="TD" {% if seance.type_seance=="TD" %}selected{% endif %}>TD</option>
+          <option value="TP" {% if seance.type_seance=="TP" %}selected{% endif %}>TP</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-gray-600">Date et heure :</label>
+        <input type="datetime-local" name="date_prevue" class="w-full border rounded-lg p-2"
+               value="{{ seance.date_prevue.strftime('%Y-%m-%dT%H:%M') }}" required>
+      </div>
+
+      <div>
+        <label class="text-gray-600">Durée (minutes) :</label>
+        <input type="number" name="duree_minutes" class="w-full border rounded-lg p-2"
+               value="{{ seance.duree_minutes }}" required>
+      </div>
+
+    </div>
+
+    <div class="text-right mt-6">
+      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+        💾 Enregistrer les modifications
+      </button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

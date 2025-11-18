@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block title %}Modifier Étudiant{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-gray-800">Modifier Étudiant - {{ filiere.nom }}</h1>
+
+    <div class="bg-white p-6 rounded-2xl shadow border border-gray-200">
+        <form method="POST" action="{{ url_for('chef_filiere.edit_student', filiere_id=filiere.id, student_id=etu.id) }}" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" name="nom_complet" placeholder="Nom complet" value="{{ etu.utilisateur.nom_complet }}" required class="border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-400">
+                <input type="email" name="email" placeholder="Email institutionnel" value="{{ etu.utilisateur.email }}" required class="border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-400">
+                <input type="text" name="matricule" placeholder="Matricule" value="{{ etu.matricule }}" required class="border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-400">
+                <select name="annee_id" required class="border border-gray-300 p-2 rounded">
+    <option value="">Sélectionner une année</option>
+    {% for annee in annees %}
+        <option value="{{ annee.id }}" {% if etu.annee_formation_id == annee.id %}selected{% endif %}>
+            {{ annee.libelle }}
+        </option>
+    {% endfor %}
+</select>
+
+            </div>
+            <div class="pt-4 flex gap-2">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow transition-all">
+                    💾 Enregistrer les modifications
+                </button>
+                <a href="{{ url_for('chef_filiere.students', filiere_id=filiere.id) }}" class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-2 rounded-lg shadow transition-all">
+                    🔙 Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

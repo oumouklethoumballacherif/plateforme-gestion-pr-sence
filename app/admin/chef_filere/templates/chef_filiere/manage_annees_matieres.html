@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block title %}Gestion Années & Semestres{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">Années & Semestres - {{ filiere.nom }}</h1>
+
+<a href="{{ url_for('chef_filiere.add_annee', filiere_id=filiere.id) }}"
+   class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4 inline-block">Ajouter Année</a>
+
+<table class="min-w-full bg-white shadow-md rounded mb-6">
+    <thead>
+        <tr class="bg-gray-200 text-left">
+            <th class="py-2 px-4">Année</th>
+            <th class="py-2 px-4">Ordre</th>
+            <th class="py-2 px-4">Semestres</th>
+            <th class="py-2 px-4">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for annee in annees %}
+        <tr class="border-b">
+            <td class="py-2 px-4">{{ annee.libelle }}</td>
+            <td class="py-2 px-4">{{ annee.ordre }}</td>
+            <td class="py-2 px-4">
+                {% if annee.semestres %}
+                    {{ annee.semestres|map(attribute='libelle')|join(', ') }}
+                {% else %}
+                    <span class="text-gray-500">Aucun semestre</span>
+                {% endif %}
+            </td>
+            <td class="py-2 px-4">
+                <a href="{{ url_for('chef_filiere.add_matiere', semestre_id=annee.semestres[0].id) if annee.semestres else '#' }}"
+                   class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Ajouter Matières</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

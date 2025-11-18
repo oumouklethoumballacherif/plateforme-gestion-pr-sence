@@ -169,3 +169,17 @@ def view_presences():
         selected_matiere=matiere_id,
         selected_date=date_filtre
     )
+
+
+@enseignant_bp.route("/statistics")
+@login_required
+def view_statistics():
+    enseignant = getattr(current_user, "enseignant_profil", None)
+    if not enseignant:
+        flash("Profil enseignant incomplet.", "warning")
+        return redirect(url_for("auth.login"))
+
+    # Exemple : récupérer les matières de l'enseignant
+    matieres = [aff.matiere for aff in enseignant.affectations_matieres]
+    return render_template("enseignant/statistics.html", matieres=matieres)
+

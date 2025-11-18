@@ -25,7 +25,7 @@ def send_email(subject, recipients, template, **kwargs):
         subject=subject,
         recipients=recipients,
         html=render_template(template, **kwargs),
-        sender=current_app.config.get("MAIL_DEFAULT_SENDER", "balla33cherif@gmail.com"),
+        sender=current_app.config.get("MAIL_DEFAULT_SENDER", "oumaimajabrane2001@gmail.com"),
     )
     mail.send(msg)
 
@@ -189,7 +189,7 @@ def redirect_dashboard():
         return redirect(url_for("chef.dashboard"))
 
     elif role == "chef_filiere":
-        return redirect(url_for("admin.dashboard"))
+        return redirect(url_for("chef_filiere.dashboard"))
 
     elif role == "enseignant":
         return redirect(url_for("enseignant.dashboard"))  # 🔹 remplacé ici

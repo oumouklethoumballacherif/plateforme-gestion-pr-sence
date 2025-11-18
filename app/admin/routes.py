@@ -11,7 +11,7 @@ from datetime import datetime
 from functools import wraps
 import secrets
 from sqlalchemy.orm import joinedload
-from app.admin import admin_bp
+from app.admin import admin_bp 
 
 
 
@@ -28,7 +28,7 @@ def send_email(subject, recipients, template, **kwargs):
         subject=subject,
         recipients=recipients,
         html=render_template(template, **kwargs),
-        sender=current_app.config.get("MAIL_DEFAULT_SENDER", "balla33cherif@gmail.com"),
+        sender=current_app.config.get("MAIL_DEFAULT_SENDER", "oumaimajabrane2001@gmail.com"),
     )
     mail.send(msg)
 

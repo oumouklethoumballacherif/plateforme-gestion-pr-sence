@@ -3,7 +3,7 @@ import os
 
 class Config:
     SECRET_KEY = "une_clef_secrete"
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:@localhost/university_presence"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:MYSQL123@localhost/university_presence"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Config Mail (si tu utilises Flask-Mail)

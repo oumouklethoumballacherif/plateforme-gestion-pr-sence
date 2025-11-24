@@ -75,6 +75,7 @@ def dashboard():
         .filter(AnneeFormation.filiere_id == filiere.id)
         .all()
     )
+    
 
     # Renvoyer le template avec UNE SEULE filière
     return render_template(

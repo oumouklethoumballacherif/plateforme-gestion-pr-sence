@@ -142,13 +142,14 @@ def confirm_email(token):
     user.email_confirme = True
     db.session.commit()
 
-    # Si c’est un enseignant sans mot de passe → il crée son mot de passe
-    if user.role == RoleUtilisateur.ENSEIGNANT and not user.mot_de_passe_hash:
+    # 🔹 Redirection vers la création du mot de passe si l'utilisateur n'en a pas
+    if not user.mot_de_passe_hash:
         flash("Veuillez créer votre mot de passe pour activer votre compte.", "info")
         return redirect(url_for("auth.set_password", email=email))
 
     flash("E-mail confirmé avec succès ! Vous pouvez maintenant vous connecter.", "success")
     return redirect(url_for("auth.login"))
+
 
 
 # ----------------------------------------------------

@@ -1,0 +1,181 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4 text-center title-page">📚 Mes Matières</h2>
+
+    <!-- Sélecteur du semestre -->
+    {% if semestres %}
+        <form method="POST" class="semester-form mb-4">
+            <div class="select-wrapper">
+                <select name="semestre_id" required>
+                    <option value="">-- Sélectionner un semestre --</option>
+                    {% for semestre in semestres %}
+                        <option value="{{ semestre.id }}"
+                                {% if semestre.id|string == selected_semestre_id %}selected{% endif %}>
+                            {{ semestre.libelle }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn-semestre">Afficher</button>
+        </form>
+    {% else %}
+        <div class="alert alert-info text-center mt-4">
+            Aucun semestre n'est disponible pour votre année scolaire.
+        </div>
+    {% endif %}
+
+    <!-- Affichage des matières -->
+    {% if matieres %}
+        <div class="row">
+            {% for matiere in matieres %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="matiere-card shadow-sm">
+
+                        <div class="matiere-header">
+                            <h5 class="matiere-title">{{ matiere.titre }}</h5>
+                        </div>
+
+                        <div class="matiere-body">
+                            <p><strong>Code :</strong> {{ matiere.code or "Non défini" }}</p>
+
+                            <p><strong>Professeur :</strong>
+                                {% if matiere.affectations %}
+                                    {{ matiere.affectations[0].enseignant.utilisateur.nom_complet}}
+                                    
+                                {% else %}
+                                    Non défini
+                                {% endif %}
+                            </p>
+
+                            <a href="{{ url_for('etudiant.details_matiere', matiere_id=matiere.id) }}"
+                               class="btn-details">
+                                📊 Voir les détails
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% elif selected_semestre_id %}
+        <div class="alert alert-info text-center mt-4">
+            Aucune matière n'est disponible pour ce semestre.
+        </div>
+    {% endif %}
+</div>
+
+
+<!-- ---------- STYLES AMÉLIORÉS ---------- -->
+
+<style>
+/* Titre */
+.title-page {
+    font-weight: 700;
+    color: #2b4c7e;
+}
+
+/* Formulaire du semestre */
+.semester-form {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* Style du select */
+.select-wrapper {
+    position: relative;
+    width: 220px;
+}
+
+.select-wrapper select {
+    width: 100%;
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: 1px solid #357ABD;
+    background-color: #4a90e2;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    appearance: none;
+}
+
+.select-wrapper::after {
+    content: '▾';
+    font-size: 14px;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    color: white;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Bouton semestre */
+.btn-semestre {
+    padding: 9px 18px;
+    border-radius: 8px;
+    background-color: #357ABD;
+    color: white;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-semestre:hover {
+    background-color: #285a91;
+}
+
+/* Cartes matières */
+.matiere-card {
+    border-radius: 14px;
+    overflow: hidden;
+    background: white;
+    transition: 0.25s ease;
+    border: 1px solid #e2e6ea;
+}
+
+.matiere-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+}
+
+/* En-tête de carte */
+.matiere-header {
+    background: linear-gradient(135deg, #4a90e2, #357ABD);
+    padding: 12px 16px;
+    color: white;
+}
+
+.matiere-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+/* Corps */
+.matiere-body {
+    padding: 18px;
+    color: #333;
+}
+
+/* Bouton détails */
+.btn-details {
+    margin-top: 10px;
+    display: inline-block;
+    padding: 7px 14px;
+    background: #357ABD;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.btn-details:hover {
+    background: #285a91;
+}
+</style>
+
+{% endblock %}

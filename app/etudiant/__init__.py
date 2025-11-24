@@ -1,9 +1,7 @@
 from flask import Blueprint
 
-etudiant_bp = Blueprint(
-    "etudiant_bp",
-    __name__,
-    template_folder="templates"
-)
+
+etudiant_bp  = Blueprint('etudiant', __name__, url_prefix='/etudiant', template_folder='templates/etudiant')
 
 from . import routes
+

@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block title %}Présences et Statistiques{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 Présences et Statistiques</h2>
+
+    <!-- FILTRES -->
+    <form method="GET" class="bg-white p-6 rounded shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <select name="filiere" class="border p-2 rounded">
+            <option value="">-- Filière --</option>
+            {% for fil in filieres %}
+            <option value="{{ fil.id }}" {% if fil.id==selected_filiere %}selected{% endif %}>{{ fil.nom }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="annee" class="border p-2 rounded">
+            <option value="">-- Année --</option>
+            {% for an in annees %}
+            <option value="{{ an.id }}" {% if an.id==selected_annee %}selected{% endif %}>{{ an.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="semestre" class="border p-2 rounded">
+            <option value="">-- Semestre --</option>
+            {% for sem in semestres %}
+            <option value="{{ sem.id }}" {% if sem.id==selected_semestre %}selected{% endif %}>{{ sem.libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="matiere" class="border p-2 rounded">
+            <option value="">-- Matière --</option>
+            {% for mat in matieres %}
+            <option value="{{ mat.id }}" {% if mat.id==selected_matiere %}selected{% endif %}>{{ mat.titre }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded mt-2 md:mt-0">Filtrer</button>
+    </form>
+
+    <!-- STATISTIQUES GLOBALES -->
+    <div class="bg-white p-6 rounded shadow mb-6">
+        <p><strong>Total présences :</strong> {{ total_presences }}</p>
+        <p><strong>Nombre d’étudiants différents :</strong> {{ total_etudiants }}</p>
+
+        <h3 class="mt-4 font-semibold">📌 Statistiques par matière :</h3>
+        <ul class="list-disc pl-5">
+            {% for mat, stats in stats_par_matiere.items() %}
+            <li>{{ mat }} : {{ stats.total_presences }} présences ({{ stats.etudiants_diff }} étudiants uniques)</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- LISTE DES PRÉSENCES -->
+    <div class="bg-white p-6 rounded shadow overflow-x-auto">
+        <table class="min-w-full border border-gray-200">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 border">Étudiant</th>
+                    <th class="px-4 py-2 border">Filière / Année</th>
+                    <th class="px-4 py-2 border">Matière</th>
+                    <th class="px-4 py-2 border">Type Cours</th>
+                    <th class="px-4 py-2 border">Date & Heure</th>
+                    <th class="px-4 py-2 border">Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in presences %}
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="px-4 py-2">{{ p.etudiant.utilisateur.nom_complet }}</td>
+                    <td class="px-4 py-2">{{ p.etudiant.filiere.nom }} - {{ p.etudiant.annee_formation.libelle }}</td>
+                    <td class="px-4 py-2">{{ p.seance.matiere.titre }}</td>
+                    <td class="px-4 py-2">{{ p.seance.type_cours }}</td>
+                    <td class="px-4 py-2">{{ p.date_scan.strftime("%d/%m/%Y %H:%M") }}</td>
+                    <td class="px-4 py-2">{{ p.statut.value if p.statut else 'N/A' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-500">Aucune présence trouvée.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

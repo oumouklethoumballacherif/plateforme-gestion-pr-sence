@@ -1,9 +1,10 @@
-
 {% extends 'layout.html' %}
-{% block title %}nommer les Chefs de Département{% endblock %}
+{% block title %}Nommer les Chefs de Département{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-6 text-gray-800">Nommer Chef de Département ou changer le chef de département</h1>
+<h1 class="text-2xl font-bold mb-6 text-gray-800">
+    Nommer Chef de Département ou changer le chef de département
+</h1>
 
 <div class="bg-white shadow-md rounded-lg overflow-hidden">
     <table class="w-full border-collapse">
@@ -23,7 +24,6 @@
 
                 <td class="px-4 py-2 border">
                     {% set chef = enseignants | selectattr('departement_id', 'equalto', dep.id) | selectattr('est_chef_departement', 'equalto', True) | first %}
-
                     {% if chef %}
                         {{ chef.utilisateur.nom_complet }}
                     {% else %}
@@ -34,11 +34,8 @@
                 <td class="px-4 py-2 border">
                     <form method="POST" class="flex items-center space-x-2">
                         <input type="hidden" name="departement_id" value="{{ dep.id }}">
-                        <select name="enseignant_id" required class="border p-2 rounded">
-                            <option value="">Sélectionner un enseignant</option>
-                            {% for ens in enseignants %}
-                            <option value="{{ ens.id }}">{{ ens.utilisateur.nom_complet }}</option>
-                            {% endfor %}
+                        <select name="enseignant_id" required class="border p-2 rounded enseignant_select" data-departement="{{ dep.id }}">
+                            <option value="">Chargement...</option>
                         </select>
                         <button type="submit"
                                 class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
@@ -57,4 +54,36 @@
         </tbody>
     </table>
 </div>
+
+<!-- Script JS pour charger les enseignants par département -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selects = document.querySelectorAll('.enseignant_select');
+
+    selects.forEach(select => {
+        const depId = select.dataset.departement;
+        // Initial fetch pour remplir le select
+        fetchEnseignants(depId, select);
+    });
+
+    function fetchEnseignants(depId, select) {
+        if (!depId) return;
+        fetch(`/admin/get_enseignants/${depId}`)
+            .then(resp => resp.json())
+            .then(data => {
+                select.innerHTML = "<option value=''>-- Sélectionner un enseignant --</option>";
+                data.forEach(e => {
+                    const opt = document.createElement('option');
+                    opt.value = e.id;
+                    opt.textContent = e.nom_complet;
+                    select.appendChild(opt);
+                });
+            })
+            .catch(err => {
+                console.error('Erreur fetch enseignants:', err);
+                select.innerHTML = "<option value=''>Erreur</option>";
+            });
+    }
+});
+</script>
 {% endblock %}

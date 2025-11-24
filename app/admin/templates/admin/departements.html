@@ -35,18 +35,28 @@
                 <td class="border px-4 py-2">{{ dep.id }}</td>
                 <td class="border px-4 py-2">{{ dep.nom }}</td>
                 <td class="border px-4 py-2">{{ dep.code }}</td>
-                <td class="border px-4 py-2 space-x-2">
-                    <a href="{{ url_for('admin.edit_department', id=dep.id) }}"
-                       class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600">Modifier</a>
+                 <td class="border px-4 py-2 flex items-center gap-3">
 
-                    <form action="{{ url_for('admin.delete_department', id=dep.id) }}"
-                          method="POST" class="inline">
-                        <button type="submit"
-                                class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
-                            Supprimer
-                        </button>
-                    </form>
-                </td>
+                        <!-- Modifier -->
+                        <a href="{{ url_for('admin.edit_department', id=dep.id) }}"
+                        class="w-9 h-9 flex items-center justify-center bg-blue-100 text-blue-600 
+                                hover:bg-blue-600 hover:text-white rounded-full transition">
+                            ✏️
+                        </a>
+
+                        <!-- Supprimer -->
+                        <form method="POST"
+                            action="{{ url_for('admin.delete_department', id=dep.id) }}"
+                            onsubmit="return confirm('Voulez-vous vraiment supprimer cet enseignant ?');">
+
+                            <button
+                                class="w-9 h-9 flex items-center justify-center bg-red-100 text-red-600 
+                                    hover:bg-red-600 hover:text-white rounded-full transition">
+                                🗑️
+                            </button>
+                        </form>
+
+                    </td>
             </tr>
             {% else %}
             <tr>

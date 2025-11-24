@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center page-title">📷 Scanner un QR Code</h2>
+
+    <div class="scan-card shadow">
+        <div class="scan-header">
+            <h4>📡 Zone de scan</h4>
+        </div>
+
+        <div class="scan-body">
+            <!-- Zone du scanner QR -->
+            <div id="qr-reader" class="qr-zone"></div>
+
+            <!-- Message de scan -->
+            <p id="scan-message" class="scan-message"></p>
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('etudiant.dashboard') }}" class="btn-return">
+                    ⬅️ Retour au tableau de bord
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+let scannerRunning = true;
+
+function onScanSuccess(qrMessage) {
+    if (!scannerRunning) return;
+    scannerRunning = false;
+
+    const msg = document.getElementById("scan-message");
+    msg.innerHTML = "<span class='loading'>⏳ QR détecté...</span>";
+
+    fetch("{{ url_for('etudiant.scan_presence') }}", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({seance_id: qrMessage.trim()})
+    })
+    .then(res => res.json().then(data => ({status: res.status, body: data})))
+    .then(obj => {
+        const status = obj.status;
+        const data = obj.body;
+        let text = "";
+        let isError = false;
+
+        if (status === 201) {
+            // Présence enregistrée avec succès → message vert puis redirection
+            text = `✅ ${data.message}`;
+            msg.innerHTML = `<span class='msg-success'>${text}</span>`;
+            setTimeout(() => {
+                window.location.href = "{{ url_for('etudiant.dashboard') }}";
+            }, 1200);
+        } else {
+            // Cas d'erreur ou présence déjà enregistrée
+            isError = true;
+            text = data.error || data.message || "Erreur inconnue";
+            msg.innerHTML = `<span class='msg-error'>⚠️ ${text}</span>`;
+            // Autoriser à scanner de nouveau après 2s
+            setTimeout(() => { scannerRunning = true; }, 2000);
+        }
+    })
+    .catch(() => {
+        msg.innerHTML = "<span class='msg-error'>⚠️ Erreur serveur.</span>";
+        scannerRunning = true;
+    });
+}
+
+function onScanError(err){ /* On ignore les erreurs mineures */ }
+
+let html5QrcodeScanner = new Html5QrcodeScanner(
+    "qr-reader",
+    { fps:10, qrbox:250 },
+    false
+);
+html5QrcodeScanner.render(onScanSuccess, onScanError);
+</script>
+
+<style>
+.page-title { font-weight:700;color:#2b4c7e;margin-bottom:25px; }
+.scan-card { border-radius:18px;overflow:hidden;background:white;max-width:550px;margin:auto;animation:fadeIn 0.5s ease; }
+.scan-header { background:linear-gradient(135deg,#4a90e2,#357ABD);padding:18px;color:white;text-align:center; }
+.scan-header h4 { margin:0;font-weight:600; }
+.scan-body { padding:25px; }
+.qr-zone { width:100%;max-width:350px;margin:auto;border-radius:12px;overflow:hidden;border:3px solid #357ABD;padding:5px;background:#f4f8fc;animation:glow 2s infinite alternate; }
+.scan-message { text-align:center;margin-top:20px;font-size:17px;min-height:24px; }
+.loading { color:#357ABD;font-weight:bold; }
+.msg-success { color:#1c9d46;font-weight:bold; }
+.msg-error { color:#d43f3a;font-weight:bold; }
+.btn-return { background:#357ABD;color:white;padding:10px 20px;border-radius:10px;text-decoration:none;font-weight:500;transition:all 0.25s ease; }
+.btn-return:hover { background:#285a91;transform:translateY(-2px); }
+@keyframes fadeIn { from{opacity:0;transform:translateY(15px);} to{opacity:1;transform:translateY(0);} }
+@keyframes glow { from{box-shadow:0 0 5px rgba(53,122,189,0.3);} to{box-shadow:0 0 15px rgba(53,122,189,0.55);} }
+</style>
+{% endblock %}

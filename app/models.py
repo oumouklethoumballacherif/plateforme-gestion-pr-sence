@@ -52,7 +52,7 @@ class Filiere(db.Model):
     annees = db.relationship("AnneeFormation", back_populates="filiere", cascade="all, delete-orphan")
     etudiants = db.relationship("Etudiant", back_populates="filiere")
     enseignants_affectes = db.relationship("EnseignantFiliere",back_populates="filiere",cascade="all, delete-orphan")
-
+    
 
 
 # ================================
@@ -79,8 +79,11 @@ class Semestre(db.Model):
     ordre = db.Column(db.Integer, nullable=True)
     date_creation = db.Column(db.DateTime, default=datetime.utcnow)
 
+
     annee = db.relationship("AnneeFormation", back_populates="semestres")
     matieres = db.relationship("Matiere", back_populates="semestre")
+
+
 
 
 class Matiere(db.Model):
@@ -197,6 +200,7 @@ class SeanceCours(db.Model):
 
     filiere_id = db.Column(db.Integer, db.ForeignKey("filieres.id"))
     annee_formation_id = db.Column(db.Integer, db.ForeignKey("annees_formation.id"))
+    semestre_id = db.Column(db.Integer, db.ForeignKey("semestres.id"))  # <-- Ajout
 
     type_seance = db.Column(db.Enum(TypeSeance), nullable=False)
     date_prevue = db.Column(db.DateTime, nullable=False)

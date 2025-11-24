@@ -1,0 +1,115 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+    body {
+        background: #f5f7fa;
+        font-family: "Inter", sans-serif;
+    }
+
+    .dashboard-container {
+        max-width: 650px;
+        margin: 50px auto;
+        padding: 40px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 20px;
+    }
+
+    .student-info {
+        background: #f0f4ff;
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        border-left: 4px solid #4a6cf7;
+    }
+
+    .info-row span {
+        display: inline-block;
+        margin: 5px 6px;
+        padding: 6px 14px;
+        background: #eef1f7;
+        color: #4a5568;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .btn-modern {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
+        transition: 0.25s;
+    }
+
+    .btn-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-blue {
+        background: #4a6cf7;
+        color: #fff;
+    }
+
+    .btn-green {
+        background: #3bb273;
+        color: #fff;
+    }
+</style>
+
+<div class="dashboard-container">
+
+    <h2 class="dashboard-title">🎓 Tableau de bord étudiant</h2>
+
+    {% if etudiant %}
+        <div class="student-info">
+            <h4 style="margin: 0; color:#2d3748;">
+                Bonjour, <strong>{{ etudiant.utilisateur.nom }} {{ etudiant.utilisateur.prenom }}</strong>
+            </h4>
+
+            <div class="info-row mt-2">
+                <span>📌 Matricule : {{ etudiant.matricule }}</span>
+                <span>📘 Filière : {{ etudiant.filiere.nom }}</span>
+                <span>🎯 Année : {{ etudiant.annee_formation.libelle if etudiant.annee_formation else "—" }}</span>
+            </div>
+        </div>
+
+        <p><strong>Email :</strong> {{ etudiant.utilisateur.email }}</p>
+
+        <div style="text-align:center;">
+    <a href="{{ url_for('etudiant.matieres_etudiant') }}" class="btn-modern btn-blue" style="margin-bottom:20px; display:inline-block;">
+        📚 Mes matières
+    </a><br>
+
+    <a href="{{ url_for('etudiant.scan_qr_page') }}" class="btn-modern btn-green" style="display:inline-block;">
+        📷 Scanner un QR Code
+    </a>
+</div>
+
+    {% else %}
+        <div class="alert alert-warning text-center">
+            Profil étudiant introuvable.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Statistiques PDF</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #333; padding: 6px; text-align: left; }
+        th { background-color: #4B6CB7; color: white; }
+        .rattrapage { background-color: #E53E3E; color: white; padding: 2px 6px; border-radius: 4px; }
+        .normal { background-color: #38A169; color: white; padding: 2px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h2>Statistiques des Présences</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Étudiant</th>
+                <th>Assiduité</th>
+                <th>Note /20</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in etudiants_stats %}
+            <tr>
+                <td>{{ item.etudiant.nom_complet }}</td>
+                <td>{{ item.assiduite }}%</td>
+                <td>{{ item.note }}</td>
+                <td>
+                    {% if item.statut == "RATTRAPAGE" %}
+                        <span class="rattrapage">RATTRAPAGE</span>
+                    {% else %}
+                        <span class="normal">NORMAL</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

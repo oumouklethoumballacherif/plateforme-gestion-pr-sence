@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="min-h-screen flex justify-center py-10 px-4">
+    <div class="w-full max-w-6xl">
+
+        <!-- Titre de la page -->
+        <h2 class="title-page text-3xl text-center mb-6">{{ matiere.titre }}</h2>
+
+        <!-- Statistiques générales -->
+        <div class="matiere-card mb-6 shadow-sm">
+            <div class="matiere-header">
+                <h4 class="matiere-title">Statistiques générales</h4>
+            </div>
+            <div class="matiere-body">
+    {% set total_cmdt = stats.prevue.CM + stats.prevue.TD %}
+    {% set absent_cmdt = stats.absent.CM + stats.absent.TD %}
+    {% set present_cmdt = total_cmdt - absent_cmdt %}
+    {% set taux_cmdt = (present_cmdt / total_cmdt * 100) if total_cmdt > 0 else 0 %}
+
+    {% set total_tp = stats.prevue.TP %}
+    {% set absent_tp = stats.absent.TP %}
+
+    {% set total_seances = total_cmdt + total_tp %}
+    {% set total_absences = absent_cmdt + absent_tp %}
+    {% set total_presences = total_seances - total_absences %}
+
+    {% set raisons = [] %}
+    {% if taux_cmdt <= 75 %}
+        {% set _ = raisons.append("Absences CM+TD ≥ 25%") %}
+    {% endif %}
+    {% if absent_tp >= 2 %}
+        {% set _ = raisons.append("2 absences TP ou plus") %}
+    {% endif %}
+    {% if raisons %}
+        {% set statut_global = "RATTRAPAGE" %}
+        {% set raison_statut = ", ".join(raisons) %}
+    {% else %}
+        {% set statut_global = "NORMAL" %}
+        {% set raison_statut = "Aucune" %}
+    {% endif %}
+
+    <p><strong>Total séances CM+TD :</strong> {{ total_cmdt }}</p>
+    <p><strong>Total TP :</strong> {{ total_tp }}</p>
+    <p><strong>Total séances  :</strong> {{ total_seances }}</p>
+    <p><strong>Présences  :</strong> {{ total_presences }}</p>
+    <p><strong>Absences  :</strong> {{ total_absences }}</p>
+    <p><strong>Statut :</strong> {{ statut_global }} ({{ raison_statut }}) - Assiduité CM+TD : {{ taux_cmdt|round(1) }}%</p>
+</div>
+        </div>
+
+        <!-- Historique des présences -->
+        <div class="matiere-card mb-6 shadow-sm">
+            <div class="matiere-header">
+                <h4 class="matiere-title">Historique des présences</h4>
+            </div>
+            <div class="matiere-body overflow-x-auto">
+                <table class="min-w-full border border-gray-200">
+                    <thead class="bg-blue-500 text-white">
+                        <tr>
+                            <th class="px-4 py-2 text-left">Date</th>
+                            <th class="px-4 py-2 text-left">Type</th>
+                            <th class="px-4 py-2 text-center">Présence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in historique %}
+                        <tr class="border-b">
+                            <td class="px-4 py-2">{{ s.date }}</td>
+                            <td class="px-4 py-2">{{ s.type }}</td>
+                            <td class="px-4 py-2 text-center">
+                                {% if not s.active %}
+                                    <span class="text-gray-400 italic">Séance non démarrée</span>
+                                {% else %}
+                                    {% if s.present %}
+                                        <span class="text-green-600 font-semibold">Présent</span>
+                                    {% else %}
+                                        <span class="text-red-600 font-semibold">Absent</span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bouton retour -->
+        <div class="text-center">
+            <a href="{{ url_for('etudiant.matieres_etudiant') }}" class="btn-details">
+                ← Retour aux matières
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<!-- ---------- STYLES AMÉLIORÉS ---------- -->
+<style>
+/* Titre */
+.title-page {
+    font-weight: 700;
+    color: #2b4c7e;
+}
+
+/* Cartes matières */
+.matiere-card {
+    border-radius: 14px;
+    overflow: hidden;
+    background: white;
+    transition: 0.25s ease;
+    border: 1px solid #e2e6ea;
+}
+
+.matiere-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+}
+
+/* En-tête de carte */
+.matiere-header {
+    background: linear-gradient(135deg, #4a90e2, #357ABD);
+    padding: 12px 16px;
+    color: white;
+}
+
+.matiere-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+/* Corps */
+.matiere-body {
+    padding: 18px;
+    color: #333;
+}
+
+/* Bouton détails */
+.btn-details {
+    margin-top: 10px;
+    display: inline-block;
+    padding: 7px 14px;
+    background: #357ABD;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.btn-details:hover {
+    background: #285a91;
+}
+</style>
+
+{% endblock %}

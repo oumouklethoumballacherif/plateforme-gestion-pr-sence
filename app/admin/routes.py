@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app,jsonify
 from flask_login import login_required, current_user,logout_user
 from app.models import Departement, Matiere, Filiere, SeanceCours, AnneeFormation, Enseignant, Utilisateur, RoleUtilisateur, EnseignantFiliere, AffectationMatiere, TypeSeance, db
 from app.extensions import bcrypt, mail
@@ -12,6 +12,7 @@ from functools import wraps
 import secrets
 from sqlalchemy.orm import joinedload
 from app.admin import admin_bp 
+from sqlalchemy.exc import IntegrityError
 
 
 
@@ -88,15 +89,72 @@ def edit_department(id):
         return redirect(url_for("admin.manage_departments"))
     return render_template("edit_department.html", departement=departement)
 
-
 @admin_bp.route("/departements/<int:id>/delete", methods=["POST"])
 @login_required
 def delete_department(id):
     departement = Departement.query.get_or_404(id)
+
+    from app.models import Filiere, AnneeFormation, Matiere, SeanceCours, Presence, Etudiant, Enseignant
+
+    # 🔥 0️⃣ SUPPRIMER LES ENSEIGNANTS LIES DIRECTEMENT AU DEPARTEMENT
+    enseignants_dep = Enseignant.query.filter_by(departement_id=departement.id).all()
+    for ens in enseignants_dep:
+        # Supprimer toutes ses séances
+        seances_ens = SeanceCours.query.filter_by(enseignant_id=ens.id).all()
+        for s in seances_ens:
+            Presence.query.filter_by(seance_id=s.id).delete()
+            db.session.delete(s)
+
+        # Supprimer l'utilisateur lié
+        user = ens.utilisateur
+        db.session.delete(ens)
+        db.session.delete(user)
+
+    # 1️⃣ Récupérer les filières du département
+    filieres = Filiere.query.filter_by(departement_id=departement.id).all()
+
+    for filiere in filieres:
+
+        # 2️⃣ Supprimer les étudiants + présences
+        etudiants = Etudiant.query.filter_by(filiere_id=filiere.id).all()
+        for etu in etudiants:
+            Presence.query.filter_by(etudiant_id=etu.id).delete()
+            db.session.delete(etu)
+
+        # 3️⃣ Supprimer les années + matières + séances
+        annees = AnneeFormation.query.filter_by(filiere_id=filiere.id).all()
+        for an in annees:
+
+            matieres = Matiere.query.filter_by(annee_formation_id=an.id).all()
+            for mat in matieres:
+
+                seances = SeanceCours.query.filter_by(matiere_id=mat.id).all()
+                for s in seances:
+                    Presence.query.filter_by(seance_id=s.id).delete()
+                    db.session.delete(s)
+
+                db.session.delete(mat)
+
+            db.session.delete(an)
+
+        # 4️⃣ Supprimer les enseignants liés à cette filière
+        enseignants_filiere = Enseignant.query.filter_by(filiere_id=filiere.id).all()
+        for ens in enseignants_filiere:
+            user = ens.utilisateur
+            db.session.delete(ens)
+            db.session.delete(user)
+
+        # 5️⃣ Supprimer la filière
+        db.session.delete(filiere)
+
+    # 6️⃣ Supprimer le département
     db.session.delete(departement)
+
     db.session.commit()
-    flash(f"Département {departement.nom} supprimé.", "success")
+
+    flash(f"Département {departement.nom} supprimé avec succès.", "success")
     return redirect(url_for("admin.manage_departments"))
+
 
 
 # ----------------------------------------------------
@@ -199,9 +257,83 @@ def manage_teachers():
     return render_template("enseignants.html", enseignants=enseignants, departements=departements)
 
 
+@admin_bp.route("/enseignants/<int:id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_teacher(id):
+    enseignant = Enseignant.query.get_or_404(id)
+    user = enseignant.utilisateur
+    departements = Departement.query.all()
+
+    if request.method == "POST":
+        email = request.form.get("email")
+        nom_complet = request.form.get("nom_complet")
+        departement_id = request.form.get("departement_id")
+
+        if Utilisateur.query.filter(Utilisateur.email == email, Utilisateur.id != user.id).first():
+            flash("Cet email est déjà utilisé par un autre compte.", "danger")
+            return redirect(url_for("admin.edit_teacher", id=id))
+
+        user.email = email
+        user.nom_complet = nom_complet
+        enseignant.departement_id = departement_id
+
+        db.session.commit()
+
+        flash("Enseignant modifié avec succès.", "success")
+        return redirect(url_for("admin.manage_teachers"))
+
+    return render_template("edit_enseignant.html",
+        enseignant=enseignant,
+        user=user,
+        departements=departements)
+
+        #supprimer un enseignant 
+
+@admin_bp.route("/enseignants/<int:id>/delete", methods=["POST"])
+@login_required
+def delete_teacher(id):
+    enseignant = Enseignant.query.get_or_404(id)
+    user = enseignant.utilisateur
+
+    from app.models import SeanceCours, Presence, AffectationMatiere, EnseignantFiliere
+
+    # 1️⃣ Supprimer les séances + présences associées
+    seances = SeanceCours.query.filter_by(enseignant_id=enseignant.id).all()
+    for seance in seances:
+        Presence.query.filter_by(seance_id=seance.id).delete()
+        db.session.delete(seance)
+
+    # 2️⃣ Supprimer les affectations de matières
+    AffectationMatiere.query.filter_by(enseignant_id=enseignant.id).delete()
+
+    # 3️⃣ Supprimer les liens enseignant ↔ filières
+    EnseignantFiliere.query.filter_by(enseignant_id=enseignant.id).delete()
+
+    # 4️⃣ Supprimer l'enseignant
+    db.session.delete(enseignant)
+
+    # 5️⃣ Supprimer le compte utilisateur
+    db.session.delete(user)
+
+    # 6️⃣ Commit
+    db.session.commit()
+
+    flash("Enseignant supprimé avec toutes ses affectations, séances, présences et filières.", "success")
+    return redirect(url_for("admin.manage_teachers"))
+
+
+
+
 # ----------------------------------------------------
 # AFFECTATION / RETRAIT DES CHEFS DE filiere
 # ----------------------------------------------------
+
+@admin_bp.route("/get_enseignants/<int:departement_id>")
+@login_required
+def get_enseignants(departement_id):
+    enseignants = Enseignant.query.filter_by(departement_id=departement_id).all()
+    return jsonify([{'id': e.id, 'nom_complet': e.utilisateur.nom_complet} for e in enseignants])
+
 @admin_bp.route("/assign_heads", methods=["GET", "POST"])
 @login_required
 def assign_heads():

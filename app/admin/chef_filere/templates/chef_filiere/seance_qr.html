@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="text-center page-title">📷 QR Code de la séance</h2>
+
+    <!-- QR Code -->
+    <div class="qr-card shadow">
+        <div class="qr-header">
+            <h4>Scannez ce QR code pour marquer la présence</h4>
+        </div>
+        <div class="qr-body text-center">
+            <img id="qr-img" src="{{ url_for('chef_filiere.seance_qr_img', seance_id=seance.id, t=timestamp) }}"
+                 alt="QR Code Séance" class="qr-image"/>
+            <p class="mt-2 text-muted">Le QR code se rafraîchit toutes les 15 secondes</p>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('chef_filiere.matiere_seances', matiere_id=seance.matiere_id) }}" class="btn-return">
+                ⬅️ Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Liste des étudiants présents avec compteur -->
+    <div class="qr-card shadow mt-6">
+        <h4 class="mb-2">Étudiants ayant scanné le code :</h4>
+        <p id="compteur" class="text-blue-600 font-semibold mb-2">0 étudiant(s) présents</p>
+        <ul id="liste-presences" class="list-disc list-inside text-gray-700"></ul>
+    </div>
+</div>
+
+<script>
+let presencesActuelles = new Set();
+
+// 1️⃣ Rafraîchissement du QR code toutes les 15 secondes
+function refreshQR() {
+    const qrImg = document.getElementById("qr-img");
+    qrImg.src = "{{ url_for('chef_filiere.seance_qr_img', seance_id=seance.id) }}" + "?t=" + new Date().getTime();
+}
+setInterval(refreshQR, 15000);
+
+// 2️⃣ Rafraîchir la liste des présences et le compteur
+function refreshPresences() {
+    fetch("{{ url_for('chef_filiere.get_presences', seance_id=seance.id) }}")
+        .then(resp => resp.json())
+        .then(data => {
+            const ul = document.getElementById("liste-presences");
+            const compteur = document.getElementById("compteur");
+
+            // Mettre à jour le compteur
+            compteur.textContent = `${data.length} étudiant(s) présents`;
+
+            // Ajouter uniquement les nouveaux étudiants
+            data.forEach(p => {
+                if (!presencesActuelles.has(p.nom)) {
+                    presencesActuelles.add(p.nom);
+
+                    const li = document.createElement("li");
+                    li.textContent = `${p.nom} à ${p.heure}`;
+                    ul.appendChild(li);
+                }
+            });
+        })
+        .catch(err => console.error(err));
+}
+
+// Rafraîchissement toutes les 3 secondes
+setInterval(refreshPresences, 3000);
+refreshPresences();
+</script>
+
+<style>
+.page-title { font-weight: 700; color: #2b4c7e; margin-bottom: 25px; }
+.qr-card { background: white; border-radius: 18px; max-width: 500px; margin: auto; padding: 25px; text-align: center; }
+.qr-header { background: linear-gradient(135deg, #4a90e2, #357ABD); color: white; padding: 15px; border-radius: 12px 12px 0 0; font-weight: 600; }
+.qr-body { padding: 20px; }
+.qr-image { width: 250px; height: 250px; border: 3px solid #357ABD; border-radius: 12px; background: #f4f8fc; }
+.btn-return { display: inline-block; background: #357ABD; color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 500; transition: all 0.25s ease; }
+.btn-return:hover { background: #285a91; transform: translateY(-2px); }
+</style>
+
+{% endblock %}

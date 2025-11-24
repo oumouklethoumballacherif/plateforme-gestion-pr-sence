@@ -11,43 +11,35 @@
     {% for filiere in filieres %}
     
     <!-- Formation -->
-    <div class="p-6 rounded-lg shadow-lg bg-blue-600 text-white hover:scale-105 transition-transform">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Formation - {{ filiere.nom }}</h2>
-        <span class="text-white text-2xl">📚</span>
-      </div>
-      <p class="mb-4 text-sm">Gérer années, semestres et matières (CM/TD/TP).</p>
-      <a href="{{ url_for('chef_filiere.formation', filiere_id=filiere.id) }}"
-         class="inline-block px-4 py-2 bg-white text-blue-600 font-semibold rounded hover:opacity-90">
-        Gérer la formation
-      </a>
+    
+
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Formation - {{ filiere.nom }}</h2>
+        <p class="mb-4">Gérer années, semestres et matières.</p>
+        <a href="{{ url_for('chef_filiere.formation', filiere_id=filiere.id) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">   Gérer la formation</a>
     </div>
+
 
     <!-- Enseignants -->
-    <div class="p-6 rounded-lg shadow-lg bg-green-600 text-white hover:scale-105 transition-transform">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Enseignants - {{ filiere.nom }}</h2>
-        <span class="text-white text-2xl">👩‍🏫</span>
-      </div>
-      <p class="mb-4 text-sm">Voir et affecter les matières aux enseignants.</p>
-      <a href="{{ url_for('chef_filiere.assignations_filter', filiere_id=filiere.id) }}"
-         class="inline-block px-4 py-2 bg-white text-green-600 font-semibold rounded hover:opacity-90">
-        Gérer les affectations
-      </a>
+    
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Enseignants - {{ filiere.nom }}</h2>
+        <p class="mb-4">Voir et affecter les matières aux enseignants.</p>
+        <a href="{{ url_for('chef_filiere.assignations_filter', filiere_id=filiere.id) }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Gérer les affectations</a>
     </div>
 
+
     <!-- Étudiants -->
-    <div class="p-6 rounded-lg shadow-lg bg-yellow-500 text-white hover:scale-105 transition-transform">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Étudiants - {{ filiere.nom }}</h2>
-        <span class="text-white text-2xl">🎓</span>
-      </div>
-      <p class="mb-4 text-sm">Ajouter, modifier, supprimer ou importer les étudiants.</p>
-      <a href="{{ url_for('chef_filiere.students', filiere_id=filiere.id) }}"
-         class="inline-block px-4 py-2 bg-white text-yellow-800 font-semibold rounded hover:opacity-90">
-        Gérer les étudiants
-      </a>
+
+
+
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Étudiants - {{ filiere.nom }}</h2>
+        <p class="mb-4">Ajouter, modifier, supprimer ou importer les étudiants.</p>
+        <a href="{{ url_for('chef_filiere.students', filiere_id=filiere.id) }}" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Gérer</a>
     </div>
+
+    
 
     {% endfor %}
 
@@ -57,21 +49,22 @@
 
     <!-- 📘 Cours -->
 
-    <div class="p-6 rounded-lg shadow-lg bg-red-500 text-white hover:scale-105 transition-transform">
-      <div class="flex items-center justify-between mb-4">
-       <h2 class="text-xl font-semibold">Cours</h2>
-        <span class="text-white text-2xl">🎓</span>
-      </div>
-      <p class="mb-4 text-sm">Créer, modifier et démarrer les cours (QR Code).</p>
-       <a href="{{ url_for('chef_filiere.matieres') }}"
-         class="inline-block px-4 py-2 bg-white text-red-600 font-semibold rounded hover:opacity-90">
-        Gérer les cours
-      </a>
+    <div class="bg-white shadow-md rounded p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-xl font-semibold mb-2">Cours</h2>
+        <p class="mb-4">Créer, modifier et démarrer les cours (QR Code).</p>
+        <a href="{{ url_for('chef_filiere.cours_matieres') }}" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Gérer</a>
     </div>
 
+<!-- 📊 Présences & Statistiques -->
+<div class="bg-white shadow-md rounded-lg p-6 hover:shadow-xl transition duration-200">
+    <h2 class="text-xl font-semibold mb-2 text-gray-800">Présences</h2>
+    <p class="mb-4 text-gray-600">Consulter la présence des étudiants et les statistiques.</p>
+    <a href="{{ url_for('chef_filiere.statistiques') }}" 
+       class="inline-block bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200">
+       Consulter
+    </a>
+</div>
 
-
-    <!-- 📊 Présences & Statistiques -->
     
 
     <!-- 👨‍🏫 Espace Enseignant -->

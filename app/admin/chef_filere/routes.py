@@ -646,6 +646,7 @@ from app.models import Semestre
 # --- Page filtrage matières ---
 # Route pour afficher les matières avec filtres
 # route chef_cours
+# modification de la route 
 @chef_filiere_bp.route('/matieres', methods=['GET'])
 @login_required
 def cours_matieres():
@@ -667,9 +668,7 @@ def cours_matieres():
     else:
         matieres_query = Matiere.query.filter(False)
 
-    # =======================
-    # 2️⃣ FILTRES UTILISATEUR
-    # =======================
+    # =========== FILTRES MANUELS ==============
     if selected_filiere:
         matieres_query = (
             matieres_query
@@ -690,21 +689,31 @@ def cours_matieres():
     matieres = matieres_query.all()
 
     # =======================
-    # 3️⃣ FILTRES INTELLIGENTS
+    # 2️⃣ FILTRES INTELLIGENTS
     # =======================
 
-    # 🔥 FILIERES : uniquement celles où il enseigne
-    filieres = (
+    # 🔥 FILIERES (matières où il enseigne)
+    filieres_via_matieres = (
         Filiere.query
         .join(AnneeFormation, AnneeFormation.filiere_id == Filiere.id)
         .join(Matiere, Matiere.annee_formation_id == AnneeFormation.id)
         .join(AffectationMatiere, AffectationMatiere.matiere_id == Matiere.id)
         .filter(AffectationMatiere.enseignant_id == enseignant.id)
-        .distinct()
-        .all()
     )
 
-    # 🔥 ANNEES : uniquement celles où il enseigne, et éventuellement filtrées par filière
+    # 🔥 FILIERES (chef département affectées)
+    filieres_via_affectation = (
+        Filiere.query
+        .join(EnseignantFiliere, EnseignantFiliere.filiere_id == Filiere.id)
+        .filter(EnseignantFiliere.enseignant_id == enseignant.id)
+    )
+
+    # 🔥 UNION : toutes les filières possibles
+    filieres = filieres_via_matieres.union(filieres_via_affectation).distinct().all()
+
+    # ==========================================
+    # 🔥 ANNÉES (uniquement celles de ses matières)
+    # ==========================================
     annees_query = (
         AnneeFormation.query
         .join(Matiere, Matiere.annee_formation_id == AnneeFormation.id)
@@ -717,7 +726,9 @@ def cours_matieres():
 
     annees = annees_query.distinct().all()
 
-    # 🔥 SEMESTRES : ceux où il enseigne, et éventuellement filtrés
+    # ==========================================
+    # 🔥 SEMESTRES (uniquement ceux où il enseigne)
+    # ==========================================
     semestres_query = (
         Semestre.query
         .join(Matiere, Matiere.semestre_id == Semestre.id)
@@ -733,6 +744,7 @@ def cours_matieres():
     # =======================
     # 🔁 RENDER PAGE
     # =======================
+
     return render_template(
         'cours_matieres.html',
         matieres=matieres,

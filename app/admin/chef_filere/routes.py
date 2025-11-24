@@ -655,30 +655,84 @@ def cours_matieres():
 
     enseignant = Enseignant.query.filter_by(utilisateur_id=current_user.id).first()
 
+    # =======================
+    # 1️⃣ MATIERES DE L’ENSEIGNANT
+    # =======================
     if enseignant:
-        matieres_query = Matiere.query.join(AffectationMatiere).filter(
-            AffectationMatiere.enseignant_id == enseignant.id
+        matieres_query = (
+            Matiere.query
+            .join(AffectationMatiere, AffectationMatiere.matiere_id == Matiere.id)
+            .filter(AffectationMatiere.enseignant_id == enseignant.id)
         )
     else:
         matieres_query = Matiere.query.filter(False)
 
+    # =======================
+    # 2️⃣ FILTRES UTILISATEUR
+    # =======================
     if selected_filiere:
-        matieres_query = matieres_query.join(AnneeFormation).filter(
-            AnneeFormation.filiere_id == selected_filiere
+        matieres_query = (
+            matieres_query
+            .join(AnneeFormation)
+            .filter(AnneeFormation.filiere_id == selected_filiere)
         )
 
     if selected_annee:
-        matieres_query = matieres_query.filter(Matiere.annee_formation_id == selected_annee)
+        matieres_query = matieres_query.filter(
+            Matiere.annee_formation_id == selected_annee
+        )
+
     if selected_semestre:
-        matieres_query = matieres_query.filter(Matiere.semestre_id == selected_semestre)
+        matieres_query = matieres_query.filter(
+            Matiere.semestre_id == selected_semestre
+        )
 
     matieres = matieres_query.all()
-    filieres = Filiere.query.all()
 
-    # 🔹 Filtrage dynamique
-    annees = AnneeFormation.query.filter_by(filiere_id=selected_filiere).all() if selected_filiere else []
-    semestres = Semestre.query.filter_by(annee_id=selected_annee).all() if selected_annee else []
+    # =======================
+    # 3️⃣ FILTRES INTELLIGENTS
+    # =======================
 
+    # 🔥 FILIERES : uniquement celles où il enseigne
+    filieres = (
+        Filiere.query
+        .join(AnneeFormation, AnneeFormation.filiere_id == Filiere.id)
+        .join(Matiere, Matiere.annee_formation_id == AnneeFormation.id)
+        .join(AffectationMatiere, AffectationMatiere.matiere_id == Matiere.id)
+        .filter(AffectationMatiere.enseignant_id == enseignant.id)
+        .distinct()
+        .all()
+    )
+
+    # 🔥 ANNEES : uniquement celles où il enseigne, et éventuellement filtrées par filière
+    annees_query = (
+        AnneeFormation.query
+        .join(Matiere, Matiere.annee_formation_id == AnneeFormation.id)
+        .join(AffectationMatiere, AffectationMatiere.matiere_id == Matiere.id)
+        .filter(AffectationMatiere.enseignant_id == enseignant.id)
+    )
+
+    if selected_filiere:
+        annees_query = annees_query.filter(AnneeFormation.filiere_id == selected_filiere)
+
+    annees = annees_query.distinct().all()
+
+    # 🔥 SEMESTRES : ceux où il enseigne, et éventuellement filtrés
+    semestres_query = (
+        Semestre.query
+        .join(Matiere, Matiere.semestre_id == Semestre.id)
+        .join(AffectationMatiere, AffectationMatiere.matiere_id == Matiere.id)
+        .filter(AffectationMatiere.enseignant_id == enseignant.id)
+    )
+
+    if selected_annee:
+        semestres_query = semestres_query.filter(Semestre.annee_id == selected_annee)
+
+    semestres = semestres_query.distinct().all()
+
+    # =======================
+    # 🔁 RENDER PAGE
+    # =======================
     return render_template(
         'cours_matieres.html',
         matieres=matieres,
@@ -689,8 +743,6 @@ def cours_matieres():
         selected_annee=selected_annee,
         selected_semestre=selected_semestre
     )
-
-
 
 
 

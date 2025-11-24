@@ -110,52 +110,53 @@
 <script>
 // Récupération des années en fonction de la filière
 // Dynamique : années selon la filière
-document.getElementById('filiere_select').addEventListener('change', function () {
-    const filiereId = this.value;
-    const anneeSelect = document.getElementById('annee_select');
-    const semestreSelect = document.getElementById('semestre_select');
+document.addEventListener("DOMContentLoaded", function() {
+    const filiereSelect = document.getElementById("filiereSelect");
+    const anneeSelect = document.getElementById("anneeSelect");
+    const semestreSelect = document.getElementById("semestreSelect");
+    const matiereSelect = document.getElementById("matiereSelect");
+    const form = document.getElementById("filterForm");
 
-    // Reset
-    anneeSelect.innerHTML = "<option value=''>-- Choisir --</option>";
-    semestreSelect.innerHTML = "<option value=''>-- Choisir --</option>";
+    // ================= FILTRES DYNAMIQUES =================
+    filiereSelect.addEventListener("change", function() {
+        const filiereId = this.value;
+        anneeSelect.innerHTML = '<option value="">-- choisir --</option>';
+        semestreSelect.innerHTML = '<option value="">-- choisir --</option>';
+        matiereSelect.innerHTML = '<option value="">-- choisir --</option>';
 
-    if (!filiereId) return;
+        if(filiereId){
+            fetch(`/chef_filiere/get_annees/${filiereId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(a => {
+                        const option = document.createElement("option");
+                        option.value = a.id;
+                        option.text = a.libelle;
+                        anneeSelect.appendChild(option);
+                    });
+                });
+        }
+    });
 
-    fetch(`/chef_filiere/get_annees/${filiereId}`)
-        .then(resp => resp.json())
-        .then(data => {
-            data.forEach(an => {
-                const opt = document.createElement('option');
-                opt.value = an.id;
-                opt.textContent = an.libelle;
-                anneeSelect.appendChild(opt);
-            });
-        })
-        .catch(err => console.error('Erreur fetch années:', err));
-});
+    anneeSelect.addEventListener("change", function() {
+        const anneeId = this.value;
+        semestreSelect.innerHTML = '<option value="">-- choisir --</option>';
+        matiereSelect.innerHTML = '<option value="">-- choisir --</option>';
 
-// Dynamique : semestres selon l'année
-document.getElementById('annee_select').addEventListener('change', function () {
-    const anneeId = this.value;
-    const semestreSelect = document.getElementById('semestre_select');
-
-    semestreSelect.innerHTML = "<option value=''>-- Choisir --</option>";
-
-    if (!anneeId) return;
-
-    fetch(`/chef_filiere/get_semestres/${anneeId}`)
-        .then(resp => resp.json())
-        .then(data => {
-            data.forEach(sem => {
-                const opt = document.createElement('option');
-                opt.value = sem.id;
-                opt.textContent = sem.libelle;
-                semestreSelect.appendChild(opt);
-            });
-        })
-        .catch(err => console.error('Erreur fetch semestres:', err));
-});
-
+        if(anneeId){
+            fetch(`/chef_filiere/get_semestres/${anneeId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(s => {
+                        const option = document.createElement("option");
+                        option.value = s.id;
+                        option.text = s.libelle;
+                        semestreSelect.appendChild(option);
+                    });
+                });
+        }
+    });
+  });
 </script>
 
 {% endblock %}

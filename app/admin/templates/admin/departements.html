@@ -3,70 +3,86 @@
 
 {% block content %}
 
-<h1 class="text-2xl font-bold mb-6">Départements</h1>
+<h1 class="text-3xl font-bold text-gray-800 mb-8">Départements</h1>
 
 <!-- Formulaire de création d'un département -->
-<div class="bg-white shadow-md p-6 rounded mb-6">
-    <h2 class="text-xl font-semibold mb-4">Créer un département</h2>
+<div class="bg-white shadow-xl p-6 rounded-2xl mb-8 border border-gray-200">
+    <h2 class="text-xl font-semibold text-[#003DA5] mb-2 relative 
+               after:block after:w-14 after:h-1 after:bg-[#003DA5] after:rounded-full after:mt-1">
+        Créer un département
+    </h2>
     <form method="POST" action="{{ url_for('admin.manage_departments') }}">
-        <div class="flex space-x-4">
-            <input type="text" name="nom" placeholder="Nom du département" required class="border p-2 rounded flex-1">
-            <input type="text" name="code" placeholder="Code" class="border p-2 rounded flex-1">
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Créer</button>
+        <div class="flex flex-col md:flex-row md:space-x-4 space-y-3 md:space-y-0">
+            <input type="text" name="nom" placeholder="Nom du département" required
+                   class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003DA5] focus:border-[#003DA5] transition">
+            <input type="text" name="code" placeholder="Code"
+                   class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#003DA5] focus:border-[#003DA5] transition">
+            <button type="submit"
+                    class="bg-[#003DA5] text-white px-6 py-2 rounded-lg hover:bg-[#002F7A] font-semibold transition shadow-md hover:shadow-lg">
+                Créer
+            </button>
         </div>
     </form>
 </div>
 
 <!-- Liste des départements -->
-<div class="bg-white shadow-md p-6 rounded">
-    <h2 class="text-xl font-semibold mb-4">Liste des départements</h2>
-    <table class="w-full table-auto border-collapse border border-gray-300">
-        <thead>
-            <tr class="bg-gray-100">
-                <th class="border px-4 py-2">ID</th>
-                <th class="border px-4 py-2">Nom</th>
-                <th class="border px-4 py-2">Code</th>
-                <th class="border px-4 py-2">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for dep in departements %}
-            <tr>
-                <td class="border px-4 py-2">{{ dep.id }}</td>
-                <td class="border px-4 py-2">{{ dep.nom }}</td>
-                <td class="border px-4 py-2">{{ dep.code }}</td>
-                 <td class="border px-4 py-2 flex items-center gap-3">
+<div class="bg-white shadow-xl p-6 rounded-2xl border border-gray-200">
+    <h2 class="text-xl font-semibold text-[#003DA5] mb-4 relative 
+               after:block after:w-14 after:h-1 after:bg-[#003DA5] after:rounded-full after:mt-1">
+        Liste des départements
+    </h2>
+    <div class="overflow-x-auto">
+        <table class="w-full table-auto border-collapse border border-gray-300 text-left">
+            <thead>
+                <tr class="bg-[#E6F0FA]">
+                    <th class="border px-4 py-3 text-gray-700">ID</th>
+                    <th class="border px-4 py-3 text-gray-700">Nom</th>
+                    <th class="border px-4 py-3 text-gray-700">Code</th>
+                    <th class="border px-4 py-3 text-gray-700">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dep in departements %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="border px-4 py-2">{{ dep.id }}</td>
+                    <td class="border px-4 py-2">{{ dep.nom }}</td>
+                    <td class="border px-4 py-2">{{ dep.code }}</td>
+                    <td class="border px-4 py-2 flex items-center gap-3">
 
-                        <!-- Modifier -->
+                        <!-- Modifier → jaune -->
                         <a href="{{ url_for('admin.edit_department', id=dep.id) }}"
-                        class="w-9 h-9 flex items-center justify-center bg-blue-100 text-blue-600 
-                                hover:bg-blue-600 hover:text-white rounded-full transition">
+                           class="w-9 h-9 flex items-center justify-center bg-[#FFD500]/20 text-[#FFD500] 
+                                  hover:bg-[#FFD500] hover:text-white rounded-full transition shadow-sm">
                             ✏️
                         </a>
 
-                        <!-- Supprimer -->
-                        <form method="POST"
-                            action="{{ url_for('admin.delete_department', id=dep.id) }}"
-                            onsubmit="return confirm('Voulez-vous vraiment supprimer cet enseignant ?');">
-
+                        <!-- Supprimer → rouge -->
+                        <form method="POST" action="{{ url_for('admin.delete_department', id=dep.id) }}"
+                              onsubmit="return confirm('Voulez-vous vraiment supprimer ce département ?');">
                             <button
                                 class="w-9 h-9 flex items-center justify-center bg-red-100 text-red-600 
-                                    hover:bg-red-600 hover:text-white rounded-full transition">
+                                       hover:bg-red-600 hover:text-white rounded-full transition shadow-sm">
                                 🗑️
                             </button>
                         </form>
 
+                        <!-- Option Succès (ex: chef nommé) → vert -->
+                        <!-- Exemple : 
+                        <span class="px-3 py-1 bg-[#28A745]/20 text-[#28A745] rounded-full text-sm font-semibold">Nomination</span>
+                        -->
+
                     </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="4" class="border px-4 py-2 text-center">
-                    Aucun département trouvé.
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="border px-4 py-2 text-center text-gray-500">
+                        Aucun département trouvé.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 {% endblock %}

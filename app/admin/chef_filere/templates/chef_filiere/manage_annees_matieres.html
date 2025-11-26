@@ -3,38 +3,54 @@
 {% block title %}Gestion Années & Semestres{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold mb-6">Années & Semestres - {{ filiere.nom }}</h1>
+<div class="max-w-7xl mx-auto p-6">
 
-<a href="{{ url_for('chef_filiere.add_annee', filiere_id=filiere.id) }}"
-   class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4 inline-block">Ajouter Année</a>
+    <h1 class="text-3xl font-bold mb-6">Années & Semestres - {{ filiere.nom }}</h1>
 
-<table class="min-w-full bg-white shadow-md rounded mb-6">
-    <thead>
-        <tr class="bg-gray-200 text-left">
-            <th class="py-2 px-4">Année</th>
-            <th class="py-2 px-4">Ordre</th>
-            <th class="py-2 px-4">Semestres</th>
-            <th class="py-2 px-4">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for annee in annees %}
-        <tr class="border-b">
-            <td class="py-2 px-4">{{ annee.libelle }}</td>
-            <td class="py-2 px-4">{{ annee.ordre }}</td>
-            <td class="py-2 px-4">
-                {% if annee.semestres %}
-                    {{ annee.semestres|map(attribute='libelle')|join(', ') }}
+    <a href="{{ url_for('chef_filiere.add_annee', filiere_id=filiere.id) }}"
+       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4 inline-block transition">
+       ➕ Ajouter Année
+    </a>
+
+    <div class="bg-white shadow-md rounded overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="px-4 py-2 text-left font-semibold text-gray-700">Année</th>
+                    <th class="px-4 py-2 text-left font-semibold text-gray-700">Ordre</th>
+                    <th class="px-4 py-2 text-left font-semibold text-gray-700">Semestres</th>
+                    <th class="px-4 py-2 text-left font-semibold text-gray-700">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for annee in annees %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-4 py-2">{{ annee.libelle }}</td>
+                    <td class="px-4 py-2">{{ annee.ordre }}</td>
+                    <td class="px-4 py-2">
+                        {% if annee.semestres %}
+                            {{ annee.semestres|map(attribute='libelle')|join(', ') }}
+                        {% else %}
+                            <span class="text-gray-500">Aucun semestre</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-2">
+                        {% if annee.semestres %}
+                        <a href="{{ url_for('chef_filiere.add_matiere', semestre_id=annee.semestres[0].id) }}"
+                           class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition">Ajouter Matières</a>
+                        {% else %}
+                        <span class="text-gray-400">N/A</span>
+                        {% endif %}
+                    </td>
+                </tr>
                 {% else %}
-                    <span class="text-gray-500">Aucun semestre</span>
-                {% endif %}
-            </td>
-            <td class="py-2 px-4">
-                <a href="{{ url_for('chef_filiere.add_matiere', semestre_id=annee.semestres[0].id) if annee.semestres else '#' }}"
-                   class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Ajouter Matières</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-gray-500">Aucune année trouvée.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
 {% endblock %}

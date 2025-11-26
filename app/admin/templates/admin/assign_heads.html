@@ -2,26 +2,26 @@
 {% block title %}Nommer les Chefs de Département{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-6 text-gray-800">
-    Nommer Chef de Département ou changer le chef de département
+<h1 class="text-2xl font-bold mb-6 text-[#003DA5] relative
+           after:block after:w-16 after:h-1 after:bg-[#003DA5] after:rounded-full after:mt-1">
+    Nommer ou changer le chef de département
 </h1>
 
-<div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <table class="w-full border-collapse">
-        <thead>
-            <tr class="bg-gray-100 text-left">
-                <th class="px-4 py-2 border">#</th>
-                <th class="px-4 py-2 border">Nom du Département</th>
-                <th class="px-4 py-2 border">Chef Actuel</th>
-                <th class="px-4 py-2 border">Changer de Chef</th>
+<div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-200">
+    <table class="w-full border-collapse text-sm">
+        <thead class="bg-[#E6F0FA] text-gray-700">
+            <tr>
+                <th class="px-4 py-2 border font-medium">#</th>
+                <th class="px-4 py-2 border font-medium">Nom du Département</th>
+                <th class="px-4 py-2 border font-medium">Chef Actuel</th>
+                <th class="px-4 py-2 border font-medium">Nommer un Chef</th>
             </tr>
         </thead>
         <tbody>
             {% for dep in departements %}
-            <tr class="border-t hover:bg-gray-50">
+            <tr class="border-t hover:bg-[#F0F8FF] transition">
                 <td class="px-4 py-2 border">{{ dep.id }}</td>
                 <td class="px-4 py-2 border font-semibold">{{ dep.nom }}</td>
-
                 <td class="px-4 py-2 border">
                     {% set chef = enseignants | selectattr('departement_id', 'equalto', dep.id) | selectattr('est_chef_departement', 'equalto', True) | first %}
                     {% if chef %}
@@ -30,15 +30,16 @@
                         <span class="text-gray-500 italic">Aucun chef nommé</span>
                     {% endif %}
                 </td>
-
                 <td class="px-4 py-2 border">
                     <form method="POST" class="flex items-center space-x-2">
                         <input type="hidden" name="departement_id" value="{{ dep.id }}">
-                        <select name="enseignant_id" required class="border p-2 rounded enseignant_select" data-departement="{{ dep.id }}">
+                        <select name="enseignant_id" required
+                                class="border p-2 rounded-lg focus:ring-2 focus:ring-[#003DA5] focus:outline-none enseignant_select"
+                                data-departement="{{ dep.id }}">
                             <option value="">Chargement...</option>
                         </select>
                         <button type="submit"
-                                class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                class="bg-[#003DA5] text-white px-4 py-1 rounded-lg hover:bg-[#002F7A] transition shadow-sm">
                             Nommer
                         </button>
                     </form>
@@ -55,14 +56,12 @@
     </table>
 </div>
 
-<!-- Script JS pour charger les enseignants par département -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const selects = document.querySelectorAll('.enseignant_select');
 
     selects.forEach(select => {
         const depId = select.dataset.departement;
-        // Initial fetch pour remplir le select
         fetchEnseignants(depId, select);
     });
 

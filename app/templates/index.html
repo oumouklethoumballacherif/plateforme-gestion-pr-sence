@@ -3,38 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Université — Gestion de présence</title>
-  <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet"> -->
-   <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
-</head>
-<body class="bg-gray-50 flex flex-col min-h-screen">
+  <title>UIR — Gestion des Présences</title>
 
-  <!-- Navigation -->
-  <nav class="bg-white shadow-md py-4 px-8 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-blue-600">🎓 Université</h1>
-    <div class="space-x-4">
-      <a href="{{ url_for('auth.login') }}" class="text-gray-700 hover:text-blue-600 font-medium">Connexion</a>
-      <a href="{{ url_for('auth.register') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium">Inscription</a>
-    </div>
+  <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800" rel="stylesheet">
+
+  <style>
+    body { font-family: "Inter", sans-serif; }
+  </style>
+</head>
+
+<body class="bg-[#F2F4F7] flex flex-col min-h-screen">
+
+  <!-- Header / Navigation -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 px-10 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <img src="{{ url_for('static', filename='img/uir_logo.png') }}" alt="UIR Logo" class="h-12">
+        <span class="text-xl font-semibold text-[#003DA5] tracking-wide">
+            Université Internationale de Rabat
+        </span>
+      </div>
+
+      <div class="space-x-5">
+        <a href="{{ url_for('auth.login') }}"
+           class="text-gray-700 hover:text-[#003DA5] font-medium transition">
+           Connexion
+        </a>
+
+        <a href="{{ url_for('auth.register') }}"
+           class="bg-[#003DA5] text-white px-5 py-2.5 rounded-lg hover:bg-[#002F7A] transition font-medium shadow-sm">
+           Inscription
+        </a>
+      </div>
   </nav>
 
-  <!-- Section principale -->
-  <main class="flex-grow flex flex-col justify-center items-center text-center p-8">
-    <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Plateforme de Gestion de Présence</h2>
-    <p class="text-gray-600 text-lg max-w-2xl mb-8">
-      Simplifiez la gestion des présences à l’université grâce à un système intelligent et automatisé.  
-      Gagnez du temps, réduisez les erreurs et suivez les absences en temps réel.
+  <!-- Hero section -->
+  <main class="flex-grow flex flex-col items-center text-center px-6 py-20">
+
+    <h2 class="text-5xl font-extrabold text-[#003DA5] mb-4 leading-tight">
+        Plateforme de Gestion<br>des Présences
+    </h2>
+
+    <p class="text-gray-700 text-lg max-w-2xl mb-10 leading-relaxed">
+      Une solution moderne et intelligente développée pour optimiser la gestion des présences 
+      au sein de l’UIR, offrant simplicité, efficacité et précision pour les enseignants 
+      comme pour les étudiants.
     </p>
 
-    <div class="space-x-4">
-      <a href="{{ url_for('auth.login') }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">Se connecter</a>
-      <a href="{{ url_for('auth.register') }}" class="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-50">Créer un compte</a>
+    <div class="flex flex-wrap gap-4 justify-center mt-4">
+      <a href="{{ url_for('auth.login') }}"
+         class="bg-[#003DA5] text-white px-8 py-3 rounded-lg text-lg hover:bg-[#002F7A] transition shadow">
+         Se connecter
+      </a>
+
+      <a href="{{ url_for('auth.register') }}"
+         class="border border-[#003DA5] text-[#003DA5] px-8 py-3 rounded-lg text-lg hover:bg-[#EAF1FF] transition">
+         Créer un compte
+      </a>
     </div>
+
   </main>
 
   <!-- Footer -->
-  <footer class="bg-white py-4 shadow-inner text-center text-gray-500 text-sm">
-    © {{ current_year or 2025 }} Université | Tous droits réservés
+  <footer class="bg-white border-t border-gray-200 text-center text-gray-500 py-5 text-sm">
+    © {{ current_year or 2025 }} — Université Internationale de Rabat<br>
+    Plateforme de gestion des présences
   </footer>
 
 </body>

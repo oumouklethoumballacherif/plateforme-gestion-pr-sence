@@ -1,37 +1,47 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">📘 Filières de mon département</h1>
 
-<table class="w-full border border-gray-300">
-  <thead class="bg-gray-100">
-    <tr>
-      <th class="border px-4 py-2">Nom</th>
-      <th class="border px-4 py-2">Code</th>
-      <th class="border px-4 py-2">Chef de filière</th>
-      <th class="border px-4 py-2">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for filiere in filieres %}
-    <tr>
-      <td class="border px-4 py-2">{{ filiere.nom }}</td>
-      <td class="border px-4 py-2">{{ filiere.code }}</td>
-      <td class="border px-4 py-2">
-        {% set chef = filiere.enseignants | selectattr('est_chef_filiere', 'equalto', True) | first %}
-        {% if chef %}
-          {{ chef.utilisateur.nom_complet }}
-        {% else %}
-          <span class="italic text-gray-500">Aucun chef nommé</span>
-        {% endif %}
-      </td>
-      <td class="border px-4 py-2">
-        <a href="{{ url_for('chef.nommer_chef_filiere', filiere_id=filiere.id) }}"
-           class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-          Nommer / Modifier Chef
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<h1 class="text-3xl font-bold mb-8 text-gray-800">📘 Filières du département</h1>
+
+<div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+  <table class="w-full">
+    <thead class="bg-gray-100 text-gray-700 uppercase text-sm tracking-wider">
+      <tr>
+        <th class="px-6 py-3 text-left">Nom</th>
+        <th class="px-6 py-3 text-left">Code</th>
+        <th class="px-6 py-3 text-left">Chef de filière</th>
+        <th class="px-6 py-3 text-center">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody class="text-gray-800 text-sm">
+      {% for filiere in filieres %}
+      <tr class="hover:bg-gray-50 transition">
+        <td class="px-6 py-4 font-medium">{{ filiere.nom }}</td>
+        <td class="px-6 py-4">{{ filiere.code }}</td>
+
+        <td class="px-6 py-4">
+          {% set chef = filiere.enseignants | selectattr('est_chef_filiere', 'equalto', True) | first %}
+          {% if chef %}
+            <span class="font-semibold text-gray-800">{{ chef.utilisateur.nom_complet }}</span>
+          {% else %}
+            <span class="italic text-gray-500">Aucun chef nommé</span>
+          {% endif %}
+        </td>
+
+        <td class="px-6 py-4 text-center">
+          <a
+            href="{{ url_for('chef.nommer_chef_filiere', filiere_id=filiere.id) }}"
+            title="Modifier chef de filière"
+            class="text-blue-600 text-xl hover:text-blue-800 transition"
+          >
+            🖉
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
 {% endblock %}

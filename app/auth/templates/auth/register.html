@@ -2,22 +2,76 @@
 {% block title %}Inscription{% endblock %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
-  <div class="w-full max-w-md bg-white p-8 rounded-lg shadow">
-    <h2 class="text-2xl font-bold mb-6 text-center">Créer un compte</h2>
-    <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-4">
-      <input type="text" name="nom_complet" placeholder="Nom complet" required
-             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <input type="email" name="email" placeholder="Email" required
-             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <input type="password" name="mot_de_passe" placeholder="Mot de passe" required
-             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12">
+
+  <div class="w-full max-w-md bg-white p-10 rounded-2xl shadow-xl border border-gray-200">
+
+    <!-- Titre -->
+    <h2 class="text-4xl font-extrabold text-center text-[#003DA5] mb-2 tracking-tight">
+      Créer un compte
+    </h2>
+
+    <!-- Barre décorative UIR (bleu + jaune) -->
+    <div class="flex justify-center gap-2 mb-8">
+      <span class="w-10 h-1 rounded-full bg-[#003DA5]"></span>
+      <span class="w-6 h-1 rounded-full bg-[#F2A900]"></span>
+      <span class="w-4 h-1 rounded-full bg-[#3BAE5D]"></span>
+    </div>
+
+    <!-- Formulaire -->
+    <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-6">
+
+      <!-- Nom complet -->
+      <div>
+        <label class="text-sm font-semibold text-gray-700">Nom complet</label>
+        <input type="text" name="nom_complet" required
+               class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-lg 
+                      focus:outline-none focus:ring-2 focus:ring-[#003DA5] 
+                      focus:border-[#003DA5] transition"
+               placeholder="Ex : Oumaima Jabrane">
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="text-sm font-semibold text-gray-700">Email</label>
+        <input type="email" name="email" required
+               class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-lg 
+                      focus:outline-none focus:ring-2 focus:ring-[#003DA5] 
+                      focus:border-[#003DA5] transition"
+               placeholder="exemple@uir.ac.ma">
+      </div>
+
+      <!-- Mot de passe -->
+      <div>
+        <label class="text-sm font-semibold text-gray-700">Mot de passe</label>
+        <input type="password" name="mot_de_passe" required
+               class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-lg 
+                      focus:outline-none focus:ring-2 focus:ring-[#003DA5] 
+                      focus:border-[#003DA5] transition"
+               placeholder="•••••••••••">
+      </div>
+
+      <!-- Bouton -->
       <button type="submit"
-              class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">S’inscrire</button>
+              class="w-full bg-[#003DA5] text-white py-3.5 rounded-lg text-lg font-semibold 
+                     hover:bg-[#002F7A] transition shadow-sm hover:shadow-md">
+        S’inscrire
+      </button>
+
     </form>
-    <p class="mt-4 text-sm text-center">
-      <a href="{{ url_for('auth.login') }}" class="text-blue-500 hover:underline">Déjà un compte ? Se connecter</a>
+
+    <!-- Lien vers Connexion -->
+    <p class="mt-7 text-sm text-center text-gray-700">
+      Déjà un compte ?
+      <a href="{{ url_for('auth.login') }}" 
+         class="text-[#003DA5] font-semibold hover:underline hover:text-[#002F7A]">
+        Se connecter
+      </a>
     </p>
+
   </div>
+
 </div>
+
 {% endblock %}

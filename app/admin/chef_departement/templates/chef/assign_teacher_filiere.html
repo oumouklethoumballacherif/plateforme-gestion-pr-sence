@@ -2,57 +2,72 @@
 {% block title %}Affecter Enseignant à une Filière{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">Affecter un Enseignant à une Filière</h1>
+
+<h1 class="text-3xl font-bold mb-6 text-[#004AAD]">👨‍🏫 Affecter un Enseignant à une Filière</h1>
 
 <!-- Formulaire d'affectation -->
-<form method="POST" class="bg-white shadow-md p-4 rounded mb-6">
+<form method="POST" class="bg-white shadow-md p-6 rounded-lg border-t-4 border-[#004AAD]">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <select name="enseignant_id" required class="border p-2 rounded">
+        <select name="enseignant_id" required
+                class="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#004AAD]">
             <option value="">Sélectionner un enseignant</option>
             {% for e in enseignants %}
             <option value="{{ e.id }}">{{ e.utilisateur.nom_complet }}</option>
             {% endfor %}
         </select>
 
-        <select name="filiere_id" required class="border p-2 rounded">
+        <select name="filiere_id" required
+                class="border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-[#004AAD]">
             <option value="">Sélectionner une filière</option>
             {% for f in filieres %}
             <option value="{{ f.id }}">{{ f.nom }}</option>
             {% endfor %}
         </select>
     </div>
-    <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        ✅ Affecter
+
+    <button type="submit"
+        class="mt-5 px-5 py-3 rounded-lg text-white font-semibold bg-[#009E60] hover:bg-green-700 transition">
+        ✔ Affecter
     </button>
 </form>
 
+
 <!-- Liste des affectations -->
-<h2 class="text-xl font-semibold mb-4">Affectations existantes</h2>
-<table class="w-full border border-gray-300 bg-white shadow rounded-lg">
-    <thead class="bg-gray-100">
+<h2 class="text-2xl font-semibold mb-4 mt-8 text-[#004AAD]">📋 Affectations existantes</h2>
+
+<div class="overflow-x-auto bg-white shadow rounded-lg border border-gray-200">
+<table class="w-full">
+    <thead class="bg-[#004AAD] text-white">
         <tr>
-            <th class="border px-4 py-2 text-left">Enseignant</th>
-            <th class="border px-4 py-2 text-left">Filière</th>
-            <th class="border px-4 py-2 text-center">Action</th>
+            <th class="p-3 text-left">Enseignant</th>
+            <th class="p-3 text-left">Filière</th>
+            <th class="p-3 text-center">Actions</th>
         </tr>
     </thead>
+
     <tbody>
         {% for aff, e, f in affectations %}
-        <tr class="hover:bg-gray-50">
-            <td class="border px-4 py-2">{{ e.utilisateur.nom_complet }}</td>
-            <td class="border px-4 py-2">{{ f.nom }}</td>
-            <td class="border px-4 py-2 text-center">
+        <tr class="hover:bg-[#F5F7FA] transition">
+            <td class="p-3">{{ e.utilisateur.nom_complet }}</td>
+            <td class="p-3">{{ f.nom }}</td>
+            <td class="p-3 text-center">
                 <form method="POST" action="{{ url_for('chef.delete_affectation', affectation_id=aff.id) }}"
-                      onsubmit="return confirm('Voulez-vous vraiment supprimer cette affectation ?');">
-                    <button type="submit" class="text-red-600 hover:text-red-800">
-                        🗑️ Supprimer
+                      onsubmit="return confirm('Supprimer cette affectation ?');">
+                    <button type="submit" class="text-red-600 hover:text-red-800 text-xl">
+                        🗑️
                     </button>
                 </form>
             </td>
         </tr>
         {% else %}
-        <tr><td colspan="3" class="text-center text-gray-500 italic py-3">Aucune affectation pour l’instant.</td></tr>
+        <tr>
+            <td colspan="3" class="text-center text-gray-500 italic py-4">
+                Aucune affectation pour le moment.
+            </td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
+</div>
+
 {% endblock %}

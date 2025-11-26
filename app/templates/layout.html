@@ -5,44 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}University Attendance{% endblock %}</title>
     <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
-
 </head>
 
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+<body class="bg-gray-50 font-sans leading-normal tracking-normal">
 
 <!-- ------------------------- Navbar ------------------------- -->
-<nav class="bg-white shadow-md">
+<nav class="bg-white shadow-md border-b border-gray-200">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div class="text-xl font-bold text-blue-600">
-            <a href="{{ url_for('admin.dashboard') }}">University Attendance</a>
+        <div class="text-xl font-bold text-[#003DA5] flex items-center gap-2">
+            <img src="{{ url_for('static', filename='img/uir_logo.png') }}" alt="UIR Logo" class="h-10">
+            <a href="{{ url_for('admin.dashboard') }}" class="hover:text-[#002F7A] transition">University Attendance</a>
         </div>
         <div class="flex items-center space-x-4">
             {% if current_user.is_authenticated %}
                 <span class="text-gray-700 font-semibold">Bonjour, {{ current_user.nom_complet }}</span>
-                <a href="{{ url_for('auth.logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Déconnexion</a>
+<a href="{{ url_for('auth.logout') }}"
+   class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg shadow-sm transition">
+   Déconnexion
+</a>
+
+
             {% else %}
-                <a href="{{ url_for('auth.login') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Connexion</a>
-                <a href="{{ url_for('auth.register') }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Inscription</a>
+                <a href="{{ url_for('auth.login') }}"
+                   class="bg-[#003DA5] hover:bg-[#002F7A] text-white px-4 py-2 rounded-lg shadow-sm transition">
+                   Connexion
+                </a>
+                <a href="{{ url_for('auth.register') }}"
+                   class="bg-[#F2A900] hover:bg-[#e6a800] text-white px-4 py-2 rounded-lg shadow-sm transition">
+                   Inscription
+                </a>
             {% endif %}
         </div>
     </div>
 </nav>
 
-
-<!-- ✅ BLOCK CONTENT UNIQUE -->
+<!-- ------------------------- Main Content ------------------------- -->
 <main>
 
     <!-- Flash Messages -->
     <div class="container mx-auto p-6">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <div class="mb-6">
+                <div class="mb-6 space-y-2">
                     {% for category, message in messages %}
-                        <div class="p-4 mb-2 rounded {{
+                        <div class="p-4 rounded-lg {{
                             'bg-green-100 text-green-800' if category == 'success' else
                             'bg-red-100 text-red-800' if category == 'danger' else
                             'bg-yellow-100 text-yellow-800'
-                        }}">
+                        }} shadow-sm">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -57,30 +67,41 @@
             <div class="flex">
 
                 <!-- Sidebar -->
-                <aside class="w-64 bg-white shadow-md h-screen p-6 hidden md:block">
+                <aside class="w-64 bg-white shadow-md h-screen p-6 hidden md:block rounded-xl border border-gray-200">
                     <ul class="space-y-4">
-                        <li><a href="{{ url_for('admin.dashboard') }}" class="text-gray-800 hover:text-blue-600 font-semibold">Dashboard</a></li>
+                        <li><a href="{{ url_for('admin.dashboard') }}"
+                               class="text-gray-800 hover:text-[#003DA5] font-semibold transition">Dashboard</a></li>
 
                         {% if current_user.role.name == "ADMIN_PRINCIPAL" %}
-                            <li><a href="{{ url_for('admin.manage_departments') }}" class="text-gray-700 hover:text-blue-600">Gérer Départements</a></li>
-                            <li><a href="{{ url_for('admin.manage_teachers') }}" class="text-gray-700 hover:text-blue-600">Ajouter / Importer Enseignants</a></li>
-                            <li><a href="{{ url_for('admin.assign_heads') }}" class="text-gray-700 hover:text-blue-600">Nommer Chef de Département</a></li>
+                            <li><a href="{{ url_for('admin.manage_departments') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Gérer Départements</a></li>
+                            <li><a href="{{ url_for('admin.manage_teachers') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Ajouter / Importer Enseignants</a></li>
+                            <li><a href="{{ url_for('admin.assign_heads') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Nommer Chef de Département</a></li>
                         {% endif %}
 
                         {% if current_user.role.name == "CHEF_DEPARTEMENT" %}
-                            <li><a href="{{ url_for('chef.manage_filieres') }}" class="text-gray-700 hover:text-blue-600">Gérer Filières</a></li>
-                            <li><a href="{{ url_for('admin.manage_teachers') }}" class="text-gray-700 hover:text-blue-600">Gérer Enseignants</a></li>
-                            <li><a href="{{ url_for('chef.manage_cours') }}" class="text-gray-700 hover:text-blue-600">Gérer Cours</a></li>
+                            <li><a href="{{ url_for('chef.manage_filieres') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Gérer Filières</a></li>
+                            <li><a href="{{ url_for('admin.manage_teachers') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Gérer Enseignants</a></li>
+                            <li><a href="{{ url_for('chef.manage_cours') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Gérer Cours</a></li>
                         {% endif %}
 
                         {% if current_user.role.name == "CHEF_FILIERE" %}
-                            <li><a href="{{ url_for('admin.manage_annees') }}" class="text-gray-700 hover:text-blue-600">Gérer Années & Matières</a></li>
-                            <li><a href="{{ url_for('admin.manage_etudiants') }}" class="text-gray-700 hover:text-blue-600">Gérer Étudiants</a></li>
-                            <li><a href="{{ url_for('admin.cours') }}" class="text-gray-700 hover:text-blue-600">Gérer Cours</a></li>
+                            <li><a href="{{ url_for('admin.manage_annees') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Gérer Années & Matières</a></li>
+                            <li><a href="{{ url_for('admin.manage_etudiants') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Gérer Étudiants</a></li>
+                            <li><a href="{{ url_for('admin.cours') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Gérer Cours</a></li>
                         {% endif %}
 
                         {% if current_user.role.name == "ENSEIGNANT" %}
-                            <li><a href="{{ url_for('admin.cours') }}" class="text-gray-700 hover:text-blue-600">Mes Cours</a></li>
+                            <li><a href="{{ url_for('admin.cours') }}"
+                                   class="text-gray-700 hover:text-[#003DA5] transition">Mes Cours</a></li>
                         {% endif %}
                     </ul>
                 </aside>

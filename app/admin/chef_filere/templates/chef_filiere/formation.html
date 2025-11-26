@@ -22,35 +22,31 @@
     <h2 class="text-2xl font-semibold text-gray-700 mb-4">Années</h2>
 
     <!-- Ajouter Année -->
-    <div class="flex items-center space-x-2 mb-4">
-      <form method="POST" action="{{ url_for('chef_filiere.add_annee', filiere_id=filiere.id) }}" class="flex space-x-2">
-        <input name="libelle" placeholder="Ex: L1" class="px-3 py-2 border rounded" required>
-        <input name="ordre" type="number" placeholder="Ordre" class="px-3 py-2 border rounded w-24">
-        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Ajouter Année</button>
-      </form>
-    </div>
+    <form method="POST" action="{{ url_for('chef_filiere.add_annee', filiere_id=filiere.id) }}" class="flex flex-wrap gap-2 mb-4">
+      <input name="libelle" placeholder="Ex: L1" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+      <input name="ordre" type="number" placeholder="Ordre" class="px-3 py-2 border rounded w-24 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400">Ajouter Année</button>
+    </form>
 
     <!-- Liste des années -->
     <div class="grid md:grid-cols-2 gap-4">
       {% for annee in annees %}
         <div class="p-4 bg-white rounded-lg shadow hover:shadow-lg transition">
-          <div class="flex justify-between items-center">
+          <div class="flex justify-between items-center mb-3">
             <h3 class="font-bold text-gray-800">{{ annee.libelle }} (Ordre: {{ annee.ordre }})</h3>
-            <div class="flex space-x-1">
-              <form method="POST" action="{{ url_for('chef_filiere.delete_annee', annee_id=annee.id) }}">
-                <button class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">Supprimer Année</button>
-              </form>
-            </div>
+            <form method="POST" action="{{ url_for('chef_filiere.delete_annee', annee_id=annee.id) }}">
+              <button class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">Supprimer Année</button>
+            </form>
           </div>
 
-          <!-- Semestres de l'année -->
-          <div class="mt-3 space-y-2">
-            <strong>Semestres:</strong>
-            <div class="flex flex-wrap gap-2 mt-1">
+          <!-- Semestres -->
+          <div class="mt-2 space-y-2">
+            <strong class="text-gray-700">Semestres:</strong>
+            <div class="flex flex-wrap gap-2 items-center mt-1">
               {% for sem in annee.semestres %}
                 <span class="px-3 py-1 bg-green-100 text-green-800 rounded border">{{ sem.libelle }}</span>
-                <form method="POST" action="{{ url_for('chef_filiere.delete_semestre', semestre_id=sem.id) }}" class="inline">
-                  <button class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">Supprimer Semestre</button>
+                <form method="POST" action="{{ url_for('chef_filiere.delete_semestre', semestre_id=sem.id) }}">
+                  <button class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">Supprimer</button>
                 </form>
               {% else %}
                 <span class="text-gray-400">Aucun semestre</span>
@@ -58,9 +54,9 @@
             </div>
 
             <!-- Ajouter Semestre -->
-            <form method="POST" action="{{ url_for('chef_filiere.add_semestre', annee_id=annee.id) }}" class="flex mt-2 space-x-2">
-              <input name="libelle" placeholder="Ex: S1" class="px-2 py-1 border rounded" required>
-              <button class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Ajouter Semestre</button>
+            <form method="POST" action="{{ url_for('chef_filiere.add_semestre', annee_id=annee.id) }}" class="flex flex-wrap gap-2 mt-2">
+              <input name="libelle" placeholder="Ex: S1" class="px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-green-400" required>
+              <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400">Ajouter Semestre</button>
             </form>
           </div>
         </div>
@@ -82,13 +78,13 @@
           </div>
 
           <!-- Ajouter Matière -->
-          <form method="POST" action="{{ url_for('chef_filiere.add_matiere', semestre_id=sem.id) }}" class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-3">
-              <input name="titre" placeholder="Titre matière" class="px-3 py-2 border rounded" required>
-              <input name="total_seances" type="number" placeholder="Total séances" class="px-3 py-2 border rounded">
-              <input name="cm_seances" type="number" placeholder="CM" class="px-3 py-2 border rounded">
-              <input name="td_seances" type="number" placeholder="TD" class="px-3 py-2 border rounded">
-              <input name="tp_seances" type="number" placeholder="TP" class="px-3 py-2 border rounded">
-              <button class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 col-span-full md:col-span-1">Ajouter Matière</button>
+          <form method="POST" action="{{ url_for('chef_filiere.add_matiere', semestre_id=sem.id) }}" class="grid grid-cols-1 md:grid-cols-6 gap-2 mb-3">
+              <input name="titre" placeholder="Titre matière" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400" required>
+              <input name="total_seances" type="number" placeholder="Total séances" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+              <input name="cm_seances" type="number" placeholder="CM" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+              <input name="td_seances" type="number" placeholder="TD" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+              <input name="tp_seances" type="number" placeholder="TP" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+              <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 col-span-full md:col-span-1">Ajouter Matière</button>
           </form>
 
           <!-- Liste des matières -->
@@ -99,11 +95,9 @@
                   <div class="font-medium">{{ mat.titre }}</div>
                   <div class="text-sm text-gray-500">CM: {{ mat.cm_seances }} | TD: {{ mat.td_seances }} | TP: {{ mat.tp_seances }}</div>
                 </div>
-                <div class="flex gap-2">
-                  <form method="POST" action="{{ url_for('chef_filiere.delete_matiere', matiere_id=mat.id) }}">
-                    <button class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">Supprimer Matière</button>
-                  </form>
-                </div>
+                <form method="POST" action="{{ url_for('chef_filiere.delete_matiere', matiere_id=mat.id) }}">
+                  <button class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">Supprimer Matière</button>
+                </form>
               </div>
             {% else %}
               <div class="text-gray-400">Pas de matière</div>

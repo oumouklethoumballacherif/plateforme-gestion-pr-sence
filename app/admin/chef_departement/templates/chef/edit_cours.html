@@ -2,33 +2,37 @@
 {% block title %}Modifier le cours{% endblock %}
 
 {% block content %}
-<div class="p-6">
-  <h1 class="text-2xl font-bold text-gray-800 mb-6">✏️ Modifier le cours</h1>
+<div class="p-6 max-w-3xl mx-auto">
+  <h1 class="text-2xl font-bold text-[#003DA5] mb-6 relative
+             after:block after:w-16 after:h-1 after:bg-[#003DA5] after:rounded-full after:mt-1">
+    ✏️ Modifier le cours
+  </h1>
 
   {% if seance %}
-  <form method="POST" class="bg-white shadow-md rounded-lg p-6">
-    <div class="mb-4">
+  <form method="POST" class="bg-white shadow-xl rounded-2xl p-6 border border-gray-200 space-y-4">
+    <div>
       <label for="date_prevue" class="block text-gray-600 mb-1">Date et heure :</label>
       <input type="datetime-local" name="date_prevue" id="date_prevue"
              value="{{ seance.date_prevue.strftime('%Y-%m-%dT%H:%M') }}"
-             class="w-full border rounded p-2" required>
+             class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#003DA5]" required>
     </div>
 
-    <div class="mb-4">
+    <div>
       <label for="duree_minutes" class="block text-gray-600 mb-1">Durée (minutes) :</label>
       <input type="number" name="duree_minutes" id="duree_minutes"
              value="{{ seance.duree_minutes }}"
-             class="w-full border rounded p-2" required>
+             class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-[#003DA5]" required>
     </div>
 
-    <div class="text-right">
-      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
-        💾 Enregistrer
-      </button>
+    <div class="flex justify-end space-x-3">
       <a href="{{ url_for('chef.manage_cours') }}"
-         class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow ml-2">
+         class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg shadow transition">
         🔙 Annuler
       </a>
+      <button type="submit"
+              class="px-4 py-2 bg-[#003DA5] hover:bg-[#002F7A] text-white rounded-lg shadow transition">
+        💾 Enregistrer
+      </button>
     </div>
   </form>
   {% else %}

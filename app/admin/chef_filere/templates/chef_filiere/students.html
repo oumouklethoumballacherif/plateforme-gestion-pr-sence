@@ -44,11 +44,12 @@
         </form>
     </div>
 
+    <!-- Barre de recherche -->
+    <input type="text" id="search" placeholder="🔍 Rechercher un étudiant..." class="border p-2 rounded w-full mb-4 focus:ring-2 focus:ring-blue-400">
+
     <!-- Liste des étudiants -->
-<div class="bg-white p-6 rounded-2xl shadow border border-gray-200">
-    <h2 class="text-xl font-semibold mb-4 text-gray-700">Liste des étudiants</h2>
-    <div class="overflow-x-auto">
-        <table class="w-full border border-gray-300 rounded-lg overflow-hidden text-sm">
+    <div class="bg-white p-6 rounded-2xl shadow border border-gray-200 overflow-x-auto">
+        <table class="min-w-[700px] w-full border border-gray-300 rounded-lg text-sm">
             <thead class="bg-gray-100 text-gray-700 text-center">
                 <tr>
                     <th class="border px-4 py-2">#</th>
@@ -57,35 +58,31 @@
                     <th class="border px-4 py-2">Matricule</th>
                     <th class="border px-4 py-2">Année</th>
                     <th class="border px-4 py-2">Email confirmé</th>
-                    <th class="border px-4 py-2 ">Actions</th>
+                    <th class="border px-4 py-2">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="etudiants-tbody">
                 {% for etu in etudiants %}
-                <tr class="hover:bg-gray-50">
+                <tr class="hover:bg-gray-50 text-center">
                     <td class="border px-4 py-2">{{ etu.id }}</td>
                     <td class="border px-4 py-2">{{ etu.utilisateur.nom_complet }}</td>
                     <td class="border px-4 py-2">{{ etu.utilisateur.email }}</td>
                     <td class="border px-4 py-2">{{ etu.matricule }}</td>
-                    <td class="border px-4 py-2">
-                        {{ etu.annee_formation.libelle if etu.annee_formation else '-' }}
-                    </td>
+                    <td class="border px-4 py-2">{{ etu.annee_formation.libelle if etu.annee_formation else '-' }}</td>
                     <td class="border px-4 py-2">
                         {% if etu.utilisateur.email_confirme %}
-                            <span class="text-green-600 font-semibold">✅ Oui</span>
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">Confirmé</span>
                         {% else %}
-                            <span class="text-red-600 font-semibold">❌ Non</span>
+                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">Non confirmé</span>
                         {% endif %}
                     </td>
-                    <td class="border px-4 py-2 flex gap-2">
-                        <!-- Modifier -->
+                    <td class="border px-4 py-2 flex justify-center gap-2">
                         <a href="{{ url_for('chef_filiere.edit_student', filiere_id=filiere.id, student_id=etu.id) }}"
-                           class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded shadow">
-                            Modifier
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded shadow transition">
+                           Modifier
                         </a>
-                        <!-- Supprimer -->
                         <form method="POST" action="{{ url_for('chef_filiere.delete_student', filiere_id=filiere.id, student_id=etu.id) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet étudiant ?');">
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded shadow">
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded shadow transition">
                                 Supprimer
                             </button>
                         </form>
@@ -103,4 +100,14 @@
     </div>
 </div>
 
+<script>
+// Barre de recherche instantanée
+document.getElementById('search').addEventListener('input', function(e){
+    const filter = e.target.value.toLowerCase();
+    document.querySelectorAll('#etudiants-tbody tr').forEach(tr => {
+        const text = tr.textContent.toLowerCase();
+        tr.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

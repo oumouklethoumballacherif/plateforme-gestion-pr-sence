@@ -2,64 +2,82 @@
 {% block title %}Nommer les Chefs de Filière{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-6 text-gray-800">
-    Nommer ou changer les Chefs de Filière du département
+
+<h1 class="text-3xl font-bold mb-6 text-[#004AAD]">
+    👨‍💼 Nommer ou Changer les Chefs de Filière
 </h1>
 
-<div class="bg-white shadow-md rounded-lg overflow-hidden">
-    <table class="w-full border-collapse">
-        <thead>
-            <tr class="bg-gray-100 text-left">
-                <th class="px-4 py-2 border">#</th>
-                <th class="px-4 py-2 border">Nom de la Filière</th>
-                <th class="px-4 py-2 border">Chef Actuel</th>
-                <th class="px-4 py-2 border">Changer de Chef</th>
+<div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
+    
+    <table class="w-full text-left">
+        <thead class="bg-[#004AAD] text-white">
+            <tr>
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Filière</th>
+                <th class="px-4 py-3">Chef Actuel</th>
+                <th class="px-4 py-3 text-center">Nommer un Chef</th>
             </tr>
         </thead>
+
         <tbody>
             {% for filiere in filieres %}
-            <tr class="border-t hover:bg-gray-50">
-                <td class="px-4 py-2 border">{{ filiere.id }}</td>
-                <td class="px-4 py-2 border font-semibold">{{ filiere.nom }}</td>
+            <tr class="border-t hover:bg-[#F5F7FA] transition">
+                
+                <td class="px-4 py-3">{{ filiere.id }}</td>
 
-                <!-- ✅ Chef actuel -->
-                <td class="px-4 py-2 border">
+                <td class="px-4 py-3 font-semibold text-gray-800">
+                    {{ filiere.nom }}
+                </td>
+
+                <!-- Chef actuel -->
+                <td class="px-4 py-3">
                     {% set chef = filiere_chef_map[filiere.id] %}
                     {% if chef %}
-                        {{ chef.utilisateur.nom_complet }}
+                        <span class="font-medium text-[#009E60]">
+                            {{ chef.utilisateur.nom_complet }}
+                        </span>
                     {% else %}
                         <span class="text-gray-500 italic">Aucun chef nommé</span>
                     {% endif %}
-               </td>
+                </td>
 
+                <!-- Nomination -->
+                <td class="px-4 py-3 text-center">
+                    <form method="POST" class="flex items-center justify-center gap-2">
 
-                <!-- ✅ Formulaire de nomination -->
-                <td class="px-4 py-2 border">
-                    <form method="POST" class="flex items-center space-x-2">
                         <input type="hidden" name="filiere_id" value="{{ filiere.id }}">
-                        <select name="enseignant_id" required class="border p-2 rounded">
-                            <option value="">Sélectionner un enseignant</option>
+
+                        <select name="enseignant_id" required
+                            class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#004AAD]">
+                            <option value="">Choisir</option>
                             {% for ens in enseignants %}
                                 {% if ens.departement_id == filiere.departement_id %}
                                     <option value="{{ ens.id }}">{{ ens.utilisateur.nom_complet }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
+
+                        <!-- Bouton icône UIR -->
                         <button type="submit"
-                                class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                            Nommer
+                            class="bg-[#FFCC00] text-black px-3 py-2 rounded-lg hover:bg-yellow-400 shadow transition text-lg"
+                            title="Nommer comme chef">
+                            ⭐
                         </button>
+
                     </form>
                 </td>
+
             </tr>
             {% else %}
             <tr>
-                <td colspan="4" class="px-4 py-2 border text-center text-gray-500">
-                    Aucune filière trouvée pour votre département.
+                <td colspan="4" class="px-4 py-3 text-center text-gray-500 italic">
+                    Aucune filière disponible dans votre département.
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
 </div>
+
 {% endblock %}

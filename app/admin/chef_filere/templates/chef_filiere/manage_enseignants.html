@@ -3,26 +3,38 @@
 {% block title %}Gestion enseignants{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">Enseignants - {{ filiere.nom }}</h1>
+<div class="max-w-7xl mx-auto p-6">
 
-<table class="table-auto border-collapse border w-full">
-    <thead>
-        <tr>
-            <th class="border px-2 py-1">Nom</th>
-            <th class="border px-2 py-1">Email</th>
-            <th class="border px-2 py-1">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for enseignant in enseignants %}
-        <tr>
-            <td class="border px-2 py-1">{{ enseignant.enseignant.nom_complet }}</td>
-            <td class="border px-2 py-1">{{ enseignant.enseignant.email }}</td>
-            <td class="border px-2 py-1">
-                <a href="#" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Voir matières</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h1 class="text-2xl font-bold mb-6">Enseignants - {{ filiere.nom }}</h1>
+
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 text-left font-semibold text-gray-700">Nom</th>
+                    <th class="px-4 py-2 text-left font-semibold text-gray-700">Email</th>
+                    <th class="px-4 py-2 text-center font-semibold text-gray-700">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for enseignant in enseignants %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-4 py-2">{{ enseignant.enseignant.nom_complet }}</td>
+                    <td class="px-4 py-2">{{ enseignant.enseignant.email }}</td>
+                    <td class="px-4 py-2 text-center">
+                        <a href="#" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition">
+                            Voir matières
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="text-center py-4 text-gray-500">Aucun enseignant trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
 {% endblock %}

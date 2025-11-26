@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mx-auto mt-10">
+
+  <!-- Titre -->
+  <h2 class="text-3xl font-bold mb-8 text-blue-700">📋 Liste des présences</h2>
+
+  <!-- Filtres -->
+  <form method="POST"
+        class="mb-8 flex flex-wrap gap-4 bg-white p-5 border border-gray-200 rounded-xl shadow">
+
+    <select name="filiere_id"
+            class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+      <option value="all">Toutes les filières</option>
+      {% for filiere in filieres %}
+      <option value="{{ filiere.id }}"
+              {% if filiere.id|string == selected_filiere %}selected{% endif %}>
+        {{ filiere.nom }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <select name="matiere_id"
+            class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
+      <option value="all">Toutes les matières</option>
+      {% for matiere in matieres %}
+      <option value="{{ matiere.id }}"
+              {% if matiere.id|string == selected_matiere %}selected{% endif %}>
+        {{ matiere.titre }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <input type="date" name="date_filtre" value="{{ selected_date }}"
+           class="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" />
+
+    <button type="submit"
+            class="px-5 py-2 rounded-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 shadow">
+      🔎 Filtrer
+    </button>
+  </form>
+
+  <!-- Tableau -->
+  {% if seances %}
+  <div class="overflow-x-auto">
+    <table class="w-full border border-gray-300 rounded-lg overflow-hidden shadow-lg">
+      <thead>
+        <tr class="bg-blue-600 text-white">
+          <th class="p-3 text-left">Date</th>
+          <th class="p-3 text-left">Filière</th>
+          <th class="p-3 text-left">Matière</th>
+          <th class="p-3 text-left">Type</th>
+          <th class="p-3 text-left text-green-700 bg-white">Présents</th>
+          <th class="p-3 text-left text-red-700 bg-white">Absents</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for seance in seances %}
+        <tr class="odd:bg-gray-50 even:bg-white hover:bg-yellow-50 transition">
+          <!-- Date -->
+          <td class="border-t p-3">
+            {{ seance.date_prevue.strftime('%d/%m/%Y %H:%M') if seance.date_prevue else "N/A" }}
+          </td>
+
+          <!-- Filière -->
+          <td class="border-t p-3">
+            {{ seance.filiere.nom if seance.filiere else "N/A" }}
+          </td>
+
+          <!-- Matière -->
+          <td class="border-t p-3">
+            {{ seance.matiere.titre if seance.matiere else "N/A" }}
+          </td>
+
+          <!-- Type de séance -->
+          <td class="border-t p-3">
+            {{ seance.type_seance.value if seance.type_seance else "N/A" }}
+          </td>
+
+          <!-- Présents -->
+          <td class="border-t p-3 font-semibold text-green-700">
+            {{ seance.presences|length if seance.presences else 0 }}
+          </td>
+
+          <!-- Absents -->
+          <td class="border-t p-3 font-semibold text-red-700">
+            {% if seance.matiere and seance.matiere.filiere %}
+              {{ seance.matiere.filiere.etudiants|length - (seance.presences|length if seance.presences else 0) }}
+            {% else %}
+              N/A
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+
+  {% else %}
+    <p class="text-gray-600 mt-4">Aucune séance trouvée pour ces filtres.</p>
+  {% endif %}
+</div>
+{% endblock %}
